@@ -1,10 +1,11 @@
 ﻿using Booking.App.DTOs;
+using System.Security.Claims;
 
 namespace Booking.App.Services
 {
     public interface IBookingService
     {
-        Task<BookPerformanceDto> BookPerformanceAsync(BookPerformanceDto bookPerformanceDto);
+        Task<BookPerformanceDto> BookPerformanceAsync(BookPerformanceDto bookPerformanceDto, ClaimsPrincipal currentUser);
         Task CancelBookingAsync(int bookingId);
         Task<IEnumerable<BookingDto>> GetAllBookingsAsync();
         Task<BookingDto> GetBookingByIdAsync(int bookingId);
@@ -18,5 +19,6 @@ namespace Booking.App.Services
         Task<PerformanceDto> CreatePerformanceAsync(PerformanceDto performanceDto);
         Task UpdatePerformanceAsync(PerformanceDto performanceDto);
         Task DeletePerformanceAsync(int performanceId);
+        Task<IEnumerable<PerformanceDto>> GetPerformancesByConcertIdAsync(int concertId);
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Booking.Database.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    [Migration("20241226164356_InitialCreate")]
+    [Migration("20250101132818_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,19 +37,22 @@ namespace Booking.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerEmail")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PerformanceId")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PerformanceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
                 });
@@ -131,7 +134,15 @@ namespace Booking.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Booking.Database.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Performance");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Booking.Database.Entities.Performance", b =>

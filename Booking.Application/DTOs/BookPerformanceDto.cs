@@ -9,7 +9,6 @@ namespace Booking.App.DTOs
     public class BookPerformanceDto
     {
         public int PerformanceId { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerEmail { get; set; }
+      
     }
 }

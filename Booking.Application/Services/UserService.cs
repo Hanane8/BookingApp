@@ -24,7 +24,6 @@ namespace Booking.App.Services
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly HttpClient _httpClient;
 
-        // Constructor
         public UserService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
@@ -42,33 +41,6 @@ namespace Booking.App.Services
             _loginValidator = loginValidator;
             _httpClient = httpClient; 
         }
-
-        // Example of the LoginUserAsync method updated to use HttpClient
-        //public async Task<string> LoginUserAsync(LoginDto loginDto)
-        //{
-        //    ValidationResult validationResult = _loginValidator.Validate(loginDto);
-        //    if (!validationResult.IsValid)
-        //    {
-        //        throw new ValidationException(validationResult.Errors);
-        //    }
-
-        //    var user = await _unitOfWork.UserRepository.FindAsync(u => u.UserName == loginDto.UserName);
-        //    if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password) == PasswordVerificationResult.Failed)
-        //    {
-        //        throw new UnauthorizedAccessException("Invalid username or password.");
-        //    }
-
-        //    // Use HttpClient to make a request to an authentication API (if applicable)
-        //    var loginResponse = await _httpClient.PostAsJsonAsync("api/User/login", loginDto);
-        //    if (!loginResponse.IsSuccessStatusCode)
-        //    {
-        //        throw new UnauthorizedAccessException("Failed to authenticate user.");
-        //    }
-
-        //    var token = await loginResponse.Content.ReadAsStringAsync();
-        //    return token;
-        //}
-
         public async Task<UserDto> RegisterUserAsync(RegisterDto registerDto)
         {
             ValidationResult validationResult = _registerValidator.Validate(registerDto);
@@ -127,7 +99,6 @@ namespace Booking.App.Services
 
         public async Task LogoutUserAsync()
         {
-            // Implement logout logic if needed, e.g., removing tokens, etc.
             await Task.CompletedTask;
         }
     }

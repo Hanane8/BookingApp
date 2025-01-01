@@ -1,19 +1,35 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Booking.MAUI.ViewModels"
              x:Class="Booking.MAUI.Views.HomePage"
-             xmlns:vm="clr-namespace:Booking.MAUI.ViewModels">
+             Title="Concerts and Performances">
 
-    <!--<ContentPage.BindingContext>
-        <vm:HomeViewModel />
-    </ContentPage.BindingContext>-->
-
-    <StackLayout Padding="20">
-        <ListView ItemsSource="{Binding Concerts}">
-            <ListView.ItemTemplate>
+    <StackLayout Padding="10">
+        <!-- List of Concerts -->
+        <CollectionView ItemsSource="{Binding Concerts}" SelectionMode="Single" SelectedItem="{Binding SelectedConcert}">
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding Title}" Detail="{Binding Description}" />
+                    <StackLayout>
+                        <Label Text="{Binding Title}" FontSize="20" />
+                        <Label Text="{Binding Description}" FontSize="14" />
+                    </StackLayout>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- List of Performances (visible when a concert is selected) -->
+        <CollectionView ItemsSource="{Binding Performances}" SelectionMode="Single" SelectedItem="{Binding SelectedPerformance}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                        <StackLayout>
+                            <Label Text="{Binding Location}" />
+                            <Label Text="{Binding DateTime}" />
+                        </StackLayout>
+                        <Button Text="Book Performance" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.BookPerformanceCommand}" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </StackLayout>
 </ContentPage>

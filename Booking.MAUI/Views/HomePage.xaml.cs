@@ -1,13 +1,14 @@
 using Booking.App.Services;
 using Booking.MAUI.ViewModels;
 
-namespace Booking.MAUI.Views;
-
-public partial class HomePage : ContentPage
+namespace Booking.MAUI.Views
 {
-    public HomePage(IBookingService bookingService)
+    public partial class HomePage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = new HomeViewModel(bookingService);
+        public HomePage(HomeViewModel homeViewModel)
+        {
+            InitializeComponent();
+            BindingContext = homeViewModel;  
+        }
     }
 }

@@ -14,8 +14,7 @@ namespace Booking.MAUI.Service
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            // Replace "localhost" with your machine's IP address "192.168.0.103"
-            _httpClient.BaseAddress = new Uri("http://192.168.0.103:5133/api/User/login");  // Your machine's IP address
+            _httpClient.BaseAddress = new Uri("http://localhost:5133");  
         }
 
         public async Task<string> LoginAsync(LoginDto loginDto)
@@ -24,21 +23,16 @@ namespace Booking.MAUI.Service
             {
                 Console.WriteLine($"Attempting to log in with username: {loginDto.UserName}");
 
-                // Skicka inloggningsbegäran till API:t
                 var response = await _httpClient.PostAsJsonAsync("api/User/login", loginDto);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Deserialisera JSON-svaret till LoginResponse-objektet
                     var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
 
                     if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
                     {
                         Console.WriteLine($"Received token: {loginResponse.Token}");
-
-                        // Spara token i SecureStorage
                         await SecureStorage.SetAsync("jwt_token", loginResponse.Token);
-
                         return loginResponse.Token;
                     }
                     else
@@ -48,7 +42,6 @@ namespace Booking.MAUI.Service
                 }
                 else
                 {
-                    // Logga eventuellt felet för debug-syfte
                     var errorDetails = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"API Error: {errorDetails}");
                     throw new Exception("Login failed: Invalid credentials.");
@@ -63,9 +56,25 @@ namespace Booking.MAUI.Service
 
         public async Task<string> GetTokenAsync()
         {
-            // Hämtar token från SecureStorage
-            var token = await SecureStorage.GetAsync("jwt_token");
-            return token;
+            try
+            {
+                var token = await SecureStorage.GetAsync("jwt_token");
+
+                if (token != null)
+                {
+                    return token;
+                }
+                else
+                {
+                    throw new Exception("Token not found in SecureStorage.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AuthService: {ex.Message}");
+
+                throw new Exception($"An error occurred while getting token: {ex.Message}");
+            }
         }
     }
 

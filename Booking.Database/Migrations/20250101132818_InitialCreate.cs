@@ -68,8 +68,9 @@ namespace Booking.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PerformanceId = table.Column<int>(type: "int", nullable: false),
                     BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CustomerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,12 +81,23 @@ namespace Booking.Database.Migrations
                         principalTable: "Performances",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_PerformanceId",
                 table: "Bookings",
                 column: "PerformanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_UserId",
+                table: "Bookings",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Performances_ConcertId",
@@ -100,10 +112,10 @@ namespace Booking.Database.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Performances");
 
             migrationBuilder.DropTable(
-                name: "Performances");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Concerts");

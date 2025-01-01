@@ -1,5 +1,6 @@
 ﻿using Booking.App.DTOs;
 using Booking.App.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace Booking.API.Controllers
         }
 
         [HttpPost("book")]
+        [Authorize]
         public async Task<IActionResult> BookPerformance([FromBody] BookPerformanceDto bookPerformanceDto)
         {
             if (!ModelState.IsValid)
@@ -27,7 +29,7 @@ namespace Booking.API.Controllers
 
             try
             {
-                var result = await _bookingService.BookPerformanceAsync(bookPerformanceDto);
+                var result = await _bookingService.BookPerformanceAsync(bookPerformanceDto, User); // Pass currentUser (HttpContext.User)
                 return Ok(result);
             }
             catch (Exception ex)

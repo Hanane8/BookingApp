@@ -105,24 +105,29 @@ namespace Booking.Database.DataSeedHelper
                 if (!context.Bookings.Any())
                 {
                     var performance = context.Performances.FirstOrDefault();
-                    var user = context.Users.FirstOrDefault();
 
-                    if (performance != null && user != null)
+                    // Hämta användare baserat på deras email
+                    var user1 = context.Users.FirstOrDefault(u => u.Email == "Hanane@gmail.com");
+                    var user2 = context.Users.FirstOrDefault(u => u.Email == "Ali@gmail.com");
+
+                    if (performance != null && user1 != null && user2 != null)
                     {
                         var bookings = new[]
                         {
                             new Bokning
                             {
-                                CustomerName = "Hanane Kh",
-                                CustomerEmail = "Hanane@gmail.com",
+                                CustomerName = user1.UserName, // Hämta namn från användaren
+                                CustomerEmail = user1.Email,  // Hämta email från användaren
                                 PerformanceId = performance.Id,
+                                UserId = user1.Id,            // Koppla bokningen till rätt UserId
                                 BookingDate = DateTime.Now
                             },
                             new Bokning
                             {
-                                CustomerName = "Ali Reza",
-                                CustomerEmail = "Ali@gmail.com",
+                                CustomerName = user2.UserName, // Hämta namn från användaren
+                                CustomerEmail = user2.Email,  // Hämta email från användaren
                                 PerformanceId = performance.Id,
+                                UserId = user2.Id,            // Koppla bokningen till rätt UserId
                                 BookingDate = DateTime.Now.AddMinutes(-30)
                             }
                         };
@@ -137,6 +142,7 @@ namespace Booking.Database.DataSeedHelper
                         logger.LogWarning("No performances or users available to create bookings.");
                     }
                 }
+
             }
             catch (Exception ex)
             {

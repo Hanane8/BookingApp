@@ -23,16 +23,40 @@ builder.Services.AddTransient<IValidator<BookingDto>, BookingValidator>();
 builder.Services.AddTransient<IValidator<LoginDto>,  LoginDtoValidator>();
 builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
 
-//builder.Services.AddScoped<BookingValidator>();
-//builder.Services.AddScoped<UserValidator>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
+
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Booking API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        In = ParameterLocation.Header,
+        Description = "En API för att hantera Bookings"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -49,16 +73,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-//builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpClient<IUserService, UserService>();
-//builder.Services.AddHttpClient<IUserService, UserService>(client =>
-//{
-//    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]); 
-//});
-
-
-
-
 
 builder.Services.AddScoped<IBookingService, BookingService>();
 
@@ -117,7 +132,10 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
+
 
 app.MapControllers();
 

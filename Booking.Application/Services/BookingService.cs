@@ -8,6 +8,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Booking.App.Services
@@ -27,13 +28,12 @@ namespace Booking.App.Services
             _bookingValidator = bookingValidator;
         }
 
-        public async Task<BookPerformanceDto> BookPerformanceAsync(BookPerformanceDto bookPerformanceDto)
+        public async Task<BookPerformanceDto> BookPerformanceAsync(BookPerformanceDto bookPerformanceDto, ClaimsPrincipal currentUser)
         {
             if (bookPerformanceDto == null)
             {
                 throw new ArgumentNullException(nameof(bookPerformanceDto));
             }
-
             var bookingDto = _mapper.Map<BookingDto>(bookPerformanceDto);
             ValidationResult validationResult = _bookingValidator.Validate(bookingDto);
             if (!validationResult.IsValid)
@@ -47,20 +47,35 @@ namespace Booking.App.Services
                 throw new KeyNotFoundException("Performance not found.");
             }
 
-            var booking = new Bokning
+            var userIdString = currentUser?.FindFirstValue(ClaimTypes.NameIdentifier); 
+
+            if (Guid.TryParse(userIdString, out Guid userId)) 
             {
-                PerformanceId = bookPerformanceDto.PerformanceId,
-                CustomerName = bookPerformanceDto.CustomerName,
-                CustomerEmail = bookPerformanceDto.CustomerEmail,
-                BookingDate = DateTime.UtcNow
-            };
+                var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new UnauthorizedAccessException("User not found.");
+                }
 
-            await _unitOfWork.BookingRepository.AddAsync(booking);
-            await _unitOfWork.SaveAsync();
+                var booking = new Bokning
+                {
+                    PerformanceId = bookPerformanceDto.PerformanceId,
+                    CustomerName = user.UserName, 
+                    CustomerEmail = user.Email, 
+                    BookingDate = DateTime.UtcNow,
+                    UserId = user.Id 
+                };
 
-            return bookPerformanceDto;
-        }
+                await _unitOfWork.BookingRepository.AddAsync(booking);
+                await _unitOfWork.SaveAsync();
 
+                return bookPerformanceDto;
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Invalid UserId format.");
+            }
+        }        
         public async Task CancelBookingAsync(int bookingId)
         {
             var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
@@ -156,6 +171,14 @@ namespace Booking.App.Services
                 await _unitOfWork.PerformanceRepository.Delete(performance);
                 await _unitOfWork.SaveAsync();
             }
+        }
+        public async Task<IEnumerable<PerformanceDto>> GetPerformancesByConcertIdAsync(int concertId)
+        {
+            var performances = await _context.Performances
+                .Where(p => p.ConcertId == concertId) 
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<PerformanceDto>>(performances);
         }
     }
 }

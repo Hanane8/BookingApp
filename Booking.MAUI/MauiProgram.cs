@@ -35,17 +35,6 @@ namespace Booking.MAUI
 
             builder.Services.AddSingleton<AuthService>();
 
-            builder.Services.AddHttpClient("ApiHttpClient", httpClient =>
-            {
-                // Replace localhost with your machine's IP address
-                var baseAddress = DeviceInfo.Platform == DevicePlatform.Android
-                    ? "http://10.0.2.2:5133"  // For Android Emulator
-                    : "http://192.168.0.103:5133"; // For other platforms (like iOS, Windows)
-
-                httpClient.BaseAddress = new Uri(baseAddress);
-            });
-
-            // Add other services
             builder.Services.AddDbContext<BookingContext>(options =>
             {
                 options.UseSqlServer("Server=Hanane\\SQLEXPRESS01; Database=BookingApp; Trusted_Connection=True; TrustServerCertificate=True;");
@@ -55,6 +44,7 @@ namespace Booking.MAUI
             builder.Services.AddSingleton<IBookingService, BookingService>();
             builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            builder.Services.AddScoped<IValidator<BookingDto>, BookingValidator>();
 
             builder.Services.AddSingleton<HttpClient>();
             builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();

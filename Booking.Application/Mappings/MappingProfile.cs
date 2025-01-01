@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Booking.Database.Entities;
 using Booking.App.DTOs;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System;
 
 namespace Booking.App.Mappings
@@ -39,18 +38,18 @@ namespace Booking.App.Mappings
                 .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.BookingDate))
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerName))
                 .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.CustomerEmail))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId)) // Lägg till UserId
                 .ReverseMap();
 
             // Mappa BookPerformanceDto till Bokning
             CreateMap<BookPerformanceDto, Bokning>()
                 .ForMember(dest => dest.PerformanceId, opt => opt.MapFrom(src => src.PerformanceId))
-                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerName))
-                .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.CustomerEmail))
                 .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.Performance, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore()) // Ignorera UserId för denna DTO
                 .ReverseMap();
-            CreateMap<BookPerformanceDto, BookingDto>();
 
+            CreateMap<BookPerformanceDto, BookingDto>();
         }
     }
 }

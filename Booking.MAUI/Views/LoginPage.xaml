@@ -23,14 +23,13 @@
 
         <StackLayout Grid.Row="1" Spacing="15">
             <Entry Placeholder="Username"
-                   Text="{Binding Username}"
+                   Text="{Binding UserName}"
                    Keyboard="Text" />
             <Entry Placeholder="Password"
                    Text="{Binding Password}"
                    IsPassword="True" />
             <Button Text="Login"
                     Command="{Binding LoginCommand}"
-                    IsEnabled="{Binding CanLogin}"
                     BackgroundColor="Blue"
                     TextColor="White" />
         </StackLayout>
