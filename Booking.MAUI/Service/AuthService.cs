@@ -53,30 +53,35 @@ namespace Booking.MAUI.Service
                 throw new Exception($"An error occurred during login: {ex.Message}");
             }
         }
-
-        public async Task<string> GetTokenAsync()
+        public async Task<string> GetTokenAsync() 
         {
             try
             {
                 var token = await SecureStorage.GetAsync("jwt_token");
 
-                if (token != null)
+                // Log the token value for debugging
+                Console.WriteLine($"Token fetched from SecureStorage: {token}");
+
+                if (string.IsNullOrEmpty(token))
                 {
-                    return token;
+                    Console.WriteLine("Token not found or is empty.");
+                    throw new Exception("Token not found or is empty.");
                 }
-                else
-                {
-                    throw new Exception("Token not found in SecureStorage.");
-                }
+
+                return token;
             }
             catch (Exception ex)
             {
+                // Log the exception for debugging purposes
                 Console.WriteLine($"Error in AuthService: {ex.Message}");
 
+                // Optionally, show an alert or return a specific error message
                 throw new Exception($"An error occurred while getting token: {ex.Message}");
             }
         }
+
     }
+
 
     public class LoginResponse
     {

@@ -106,7 +106,6 @@ namespace Booking.Database.DataSeedHelper
                 {
                     var performance = context.Performances.FirstOrDefault();
 
-                    // Hämta användare baserat på deras email
                     var user1 = context.Users.FirstOrDefault(u => u.Email == "Hanane@gmail.com");
                     var user2 = context.Users.FirstOrDefault(u => u.Email == "Ali@gmail.com");
 
@@ -116,18 +115,18 @@ namespace Booking.Database.DataSeedHelper
                         {
                             new Bokning
                             {
-                                CustomerName = user1.UserName, // Hämta namn från användaren
-                                CustomerEmail = user1.Email,  // Hämta email från användaren
+                                CustomerName = user1.UserName, 
+                                CustomerEmail = user1.Email,  
                                 PerformanceId = performance.Id,
-                                UserId = user1.Id,            // Koppla bokningen till rätt UserId
+                                UserId = user1.Id,           
                                 BookingDate = DateTime.Now
                             },
                             new Bokning
                             {
-                                CustomerName = user2.UserName, // Hämta namn från användaren
-                                CustomerEmail = user2.Email,  // Hämta email från användaren
+                                CustomerName = user2.UserName, 
+                                CustomerEmail = user2.Email,  
                                 PerformanceId = performance.Id,
-                                UserId = user2.Id,            // Koppla bokningen till rätt UserId
+                                UserId = user2.Id,            
                                 BookingDate = DateTime.Now.AddMinutes(-30)
                             }
                         };

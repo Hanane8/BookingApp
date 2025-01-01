@@ -8,6 +8,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -76,15 +77,15 @@ namespace Booking.App.Services
                 throw new UnauthorizedAccessException("Invalid UserId format.");
             }
         }        
-        public async Task CancelBookingAsync(int bookingId)
-        {
-            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
-            if (booking != null)
-            {
-                await _unitOfWork.BookingRepository.Delete(booking);
-                await _unitOfWork.SaveAsync();
-            }
-        }
+        //public async Task CancelBookingAsync(int bookingId)
+        //{
+        //    var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
+        //    if (booking != null)
+        //    {
+        //        await _unitOfWork.BookingRepository.Delete(booking);
+        //        await _unitOfWork.SaveAsync();
+        //    }
+        //}
 
         public async Task<IEnumerable<BookingDto>> GetAllBookingsAsync()
         {
@@ -180,5 +181,32 @@ namespace Booking.App.Services
 
             return _mapper.Map<IEnumerable<PerformanceDto>>(performances);
         }
+        public async Task<IEnumerable<BookingDto>> GetBookingsForUserAsync(Guid userId)
+        {
+            var bookings = await _unitOfWork.BookingRepository
+                .GetAllAsync(
+                    b => b.UserId == userId,
+                    include: query => query.Include(b => b.Performance)
+                );
+
+            return _mapper.Map<IEnumerable<BookingDto>>(bookings);
+        }
+
+
+
+        // Cancel a booking
+        public async Task CancelBookingAsync(int bookingId)
+        {
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
+
+            if (booking == null)
+            {
+                throw new Exception("Booking not found.");
+            }
+
+            await _unitOfWork.BookingRepository.Delete(booking);
+            await _unitOfWork.SaveAsync();
+        }
+
     }
 }

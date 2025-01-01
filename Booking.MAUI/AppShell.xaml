@@ -7,10 +7,17 @@
     Shell.FlyoutBehavior="Flyout"
     Title="Booking.MAUI">
 
-    <ShellContent Title="Login" 
+    <TabBar>
+        <ShellContent Title="Login" 
                   ContentTemplate="{DataTemplate local:LoginPage}" 
                   Route="LoginPage" />
-    <ShellContent Title="Home" 
-                  ContentTemplate="{DataTemplate local:HomePage}" 
-                  Route="HomePage" />
+        <ShellContent Title="Home" 
+                      ContentTemplate="{DataTemplate local:HomePage}" 
+                      Route="HomePage" />
+        <ShellContent Title="My Bookings" 
+                      ContentTemplate="{DataTemplate local:MyBookingsPage}"
+                      Route="MyBookingsPage"
+                      Icon="icon_booking.png"/>
+    </TabBar>
+
 </Shell>
