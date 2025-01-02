@@ -72,15 +72,22 @@ namespace Booking.API.Controllers
                 return StatusCode(500, $"An error occurred while fetching bookings: {ex.Message}");
             }
         }
-        
-    
+
+
 
 
         [HttpPost("logout")]
         public async Task<IActionResult> LogoutUser()
         {
-            await _userService.LogoutUserAsync();
-            return NoContent();
+            try
+            {
+                await _userService.LogoutUserAsync();
+                return Ok(new { Message = "User logged out successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = $"Logout failed: {ex.Message}" });
+            }
         }
     }
 }

@@ -84,13 +84,25 @@ namespace Booking.MAUI.Service
             return _httpClient;
         }
 
-        public void Logout()
+        public async Task<LogoutResponse> LogoutUserAsync()
         {
-            SecureStorage.Remove("jwt_token");
-            _httpClient.DefaultRequestHeaders.Authorization = null;
+            var httpClient = await GetAuthenticatedHttpClientAsync();
+            var response = await httpClient.PostAsync("api/User/logout", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                SecureStorage.Remove("jwt_token");
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+                return new LogoutResponse { Success = true, Message = "User logged out successfully." };
+            }
+            else
+            {
+                var errorDetails = await response.Content.ReadAsStringAsync();
+                return new LogoutResponse { Success = false, Message = $"Logout failed: {errorDetails}" };
+            }
         }
     }
-
+    
     public class LoginResponse
     {
         public string Token { get; set; }
@@ -107,5 +119,10 @@ namespace Booking.MAUI.Service
     {
         public string UserName { get; set; }
         public string Email { get; set; }
+    }
+    public class LogoutResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 }
