@@ -1,6 +1,8 @@
 ﻿using Booking.App.DTOs;
 using Booking.App.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Booking.API.Controllers
@@ -10,10 +12,12 @@ namespace Booking.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IBookingService _bookingService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IBookingService bookingService)
         {
             _userService = userService;
+            _bookingService = bookingService;
         }
 
         [HttpPost("register")]
@@ -43,6 +47,34 @@ namespace Booking.API.Controllers
                 return BadRequest(new { Error = ex.Message });
             }
         }
+        [HttpGet("myBookings")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetMyBookings()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("User ID not found.");
+                }
+
+                var bookings = await _bookingService.GetBookingsForUserAsync(Guid.Parse(userId));
+                if (bookings == null || !bookings.Any())
+                {
+                    return NotFound("No bookings found for the logged-in user.");
+                }
+
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while fetching bookings: {ex.Message}");
+            }
+        }
+        
+    
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> LogoutUser()

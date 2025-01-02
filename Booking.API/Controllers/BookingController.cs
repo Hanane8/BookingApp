@@ -3,6 +3,7 @@ using Booking.App.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Booking.API.Controllers
@@ -74,23 +75,7 @@ namespace Booking.API.Controllers
             }
             return Ok(booking);
         }
-        [HttpGet("getByUser/{userId:guid}")]
-        public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsByUser(Guid userId)
-        {
-            try
-            {
-                var bookings = await _bookingService.GetBookingsForUserAsync(userId);
-                if (bookings == null || !bookings.Any())
-                {
-                    return NotFound("No bookings found for the specified user.");
-                }
-
-                return Ok(bookings);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching bookings: {ex.Message}");
-            }
-        }
+        
     }
 }
+    

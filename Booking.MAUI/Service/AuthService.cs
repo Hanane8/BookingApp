@@ -14,16 +14,20 @@ namespace Booking.MAUI.Service
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("http://localhost:5133");  
+            _httpClient.BaseAddress = new Uri("http://localhost:5133");
         }
 
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<bool> IsUserAuthenticated()
+        {
+            var token = await SecureStorage.GetAsync("jwt_token");
+            return !string.IsNullOrEmpty(token);
+        }
+
+        public async Task<string?> LoginAsync(LoginRequestDto dto)
         {
             try
             {
-                Console.WriteLine($"Attempting to log in with username: {loginDto.UserName}");
-
-                var response = await _httpClient.PostAsJsonAsync("api/User/login", loginDto);
+                var response = await _httpClient.PostAsJsonAsync("api/User/login", dto);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -31,7 +35,6 @@ namespace Booking.MAUI.Service
 
                     if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
                     {
-                        Console.WriteLine($"Received token: {loginResponse.Token}");
                         await SecureStorage.SetAsync("jwt_token", loginResponse.Token);
                         return loginResponse.Token;
                     }
@@ -43,48 +46,66 @@ namespace Booking.MAUI.Service
                 else
                 {
                     var errorDetails = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"API Error: {errorDetails}");
-                    throw new Exception("Login failed: Invalid credentials.");
+                    throw new Exception($"Login failed: {errorDetails}");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in AuthService: {ex.Message}");
                 throw new Exception($"An error occurred during login: {ex.Message}");
             }
         }
-        public async Task<string> GetTokenAsync() 
+
+        public async Task<AuthResponseDto?> GetAuthenticatedUserAsync()
         {
-            try
+            var token = await SecureStorage.GetAsync("jwt_token");
+            if (string.IsNullOrEmpty(token))
             {
-                var token = await SecureStorage.GetAsync("jwt_token");
-
-                // Log the token value for debugging
-                Console.WriteLine($"Token fetched from SecureStorage: {token}");
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    Console.WriteLine("Token not found or is empty.");
-                    throw new Exception("Token not found or is empty.");
-                }
-
-                return token;
+                return null;
             }
-            catch (Exception ex)
+
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync("api/User/me");
+
+            if (response.IsSuccessStatusCode)
             {
-                // Log the exception for debugging purposes
-                Console.WriteLine($"Error in AuthService: {ex.Message}");
-
-                // Optionally, show an alert or return a specific error message
-                throw new Exception($"An error occurred while getting token: {ex.Message}");
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
             }
+
+            return null;
         }
 
-    }
+        public async Task<HttpClient> GetAuthenticatedHttpClientAsync()
+        {
+            var token = await SecureStorage.GetAsync("jwt_token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            return _httpClient;
+        }
 
+        public void Logout()
+        {
+            SecureStorage.Remove("jwt_token");
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+    }
 
     public class LoginResponse
     {
         public string Token { get; set; }
+        public Guid UserId { get; set; }
+    }
+
+    public class LoginRequestDto
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class AuthResponseDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
     }
 }

@@ -20,13 +20,18 @@ namespace Booking.App.Services
         private readonly IMapper _mapper;
         private readonly BookingContext _context;
         private readonly IValidator<BookingDto> _bookingValidator;
+        private readonly HttpClient _httpClient;
+        
 
-        public BookingService(IUnitOfWork unitOfWork, IMapper mapper, BookingContext context, IValidator<BookingDto> bookingValidator)
+
+
+        public BookingService(IUnitOfWork unitOfWork, IMapper mapper, BookingContext context, IValidator<BookingDto> bookingValidator, HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _context = context;
             _bookingValidator = bookingValidator;
+            _httpClient = httpClient;
         }
 
         public async Task<BookPerformanceDto> BookPerformanceAsync(BookPerformanceDto bookPerformanceDto, ClaimsPrincipal currentUser)
@@ -183,14 +188,10 @@ namespace Booking.App.Services
         }
         public async Task<IEnumerable<BookingDto>> GetBookingsForUserAsync(Guid userId)
         {
-            var bookings = await _unitOfWork.BookingRepository
-                .GetAllAsync(
-                    b => b.UserId == userId,
-                    include: query => query.Include(b => b.Performance)
-                );
-
+            var bookings = await _unitOfWork.BookingRepository.GetAllAsync(b => b.UserId == userId);
             return _mapper.Map<IEnumerable<BookingDto>>(bookings);
         }
+
 
 
 
