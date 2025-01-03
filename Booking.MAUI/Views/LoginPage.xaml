@@ -3,8 +3,13 @@
              xmlns:vm="clr-namespace:Booking.MAUI.ViewModels"
              x:Class="Booking.MAUI.Views.LoginPage">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Logout"
+                     Command="{Binding LogoutCommand}"
+                     IsEnabled="{Binding IsLoggedIn}"
+                     Priority="0"/>
+    </ContentPage.ToolbarItems>
    
-
     <StackLayout Padding="20" VerticalOptions="Center">
         <!-- Username -->
         <Entry Placeholder="Username" Text="{Binding UserName}" />
@@ -17,9 +22,5 @@
                 Command="{Binding LoginCommand}"
                 IsVisible="{Binding IsNotLoggedIn}" />
 
-        <!-- Logout Button -->
-        <Button Text="Logout"
-                Command="{Binding LogoutCommand}"
-                IsVisible="{Binding IsLoggedIn}" />
     </StackLayout>
 </ContentPage>

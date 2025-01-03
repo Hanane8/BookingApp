@@ -1,6 +1,10 @@
 ﻿using Booking.App.DTOs;
 using Booking.MAUI.Service;
 using System.Windows.Input;
+using System.Threading.Tasks;
+using Microsoft.Maui.Storage;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 public class LoginViewModel : BindableObject
 {
@@ -14,8 +18,12 @@ public class LoginViewModel : BindableObject
         _authService = authService;
         LoginCommand = new Command(async () => await LoginAsync());
         LogoutCommand = new Command(async () => await LogoutAsync());
+
+       
         IsLoggedIn = !string.IsNullOrEmpty(SecureStorage.GetAsync("auth_token").Result);
     }
+
+   
 
     public string UserName
     {
@@ -43,16 +51,18 @@ public class LoginViewModel : BindableObject
         set
         {
             _isLoggedIn = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(IsNotLoggedIn)); // Uppdatera motsvarande egenskap
+            OnPropertyChanged(nameof(IsLoggedIn)); // Skicka med namnet på egenskapen
+            OnPropertyChanged(nameof(IsNotLoggedIn)); // Update the opposite property for visibility
         }
     }
 
+    // This is the opposite of IsLoggedIn and helps to control visibility of Login button
     public bool IsNotLoggedIn => !IsLoggedIn;
 
     public ICommand LoginCommand { get; }
     public ICommand LogoutCommand { get; }
 
+    // Method for logging in the user
     private async Task LoginAsync()
     {
         try
@@ -60,9 +70,11 @@ public class LoginViewModel : BindableObject
             var loginDto = new LoginDto { UserName = UserName, Password = Password };
             var token = await _authService.LoginAsync(loginDto);
 
+            // Store the token securely
             await SecureStorage.SetAsync("auth_token", token);
-            IsLoggedIn = true;
+            IsLoggedIn = true;  // Set logged-in state to true
 
+            // Navigate to HomePage after login
             await Shell.Current.GoToAsync("//HomePage");
         }
         catch (Exception ex)
@@ -71,14 +83,16 @@ public class LoginViewModel : BindableObject
         }
     }
 
+    // Method for logging out the user
     private async Task LogoutAsync()
     {
         try
         {
-            await _authService.LogoutUserAsync();
-            SecureStorage.Remove("auth_token");
-            IsLoggedIn = false;
+            await _authService.LogoutUserAsync();  // Perform logout via the service
+            SecureStorage.Remove("auth_token");  // Remove the token from secure storage
+            IsLoggedIn = false;  // Set logged-out state to false
 
+            // Navigate to LoginPage after logout
             await Shell.Current.GoToAsync("//LoginPage");
         }
         catch (Exception ex)
