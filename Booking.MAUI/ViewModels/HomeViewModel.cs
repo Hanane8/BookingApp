@@ -80,8 +80,9 @@ namespace Booking.MAUI.ViewModels
 
         private async Task BookPerformanceAsync()
         {
-            // Get the token from AuthService
-            var token = await _authService.GetTokenAsync();
+            // Get the authenticated HttpClient
+            var httpClient = await _authService.GetAuthenticatedHttpClientAsync();
+            var token = httpClient.DefaultRequestHeaders.Authorization?.Parameter;
 
             if (string.IsNullOrEmpty(token))
             {
@@ -111,7 +112,6 @@ namespace Booking.MAUI.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", "Please select a performance to book.", "OK");
                 return;
             }
-
             // Create a BookPerformanceDto object
             var bookPerformanceDto = new BookPerformanceDto
             {
@@ -132,8 +132,7 @@ namespace Booking.MAUI.ViewModels
                 await App.Current.MainPage.DisplayAlert("Error", $"Booking failed: {ex.Message}", "OK");
             }
         }
-
-
-
     }
 }
+
+

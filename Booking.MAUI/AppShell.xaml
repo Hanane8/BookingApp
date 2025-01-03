@@ -20,4 +20,14 @@
                       Icon="icon_booking.png"/>
     </TabBar>
 
+    <!--<Shell.ToolbarItems>
+        <ToolbarItem Text="Logout" 
+                     Command="{Binding LogoutCommand}" 
+                     IconImageSource="logout.png" 
+                     Order="Primary"
+                     Priority="0" />
+    </Shell.ToolbarItems>-->
+
+
+
 </Shell>

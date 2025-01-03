@@ -33,7 +33,8 @@ namespace Booking.MAUI.ViewModels
         // Load Bookings for the current user
         public async Task LoadBookingsAsync()
         {
-            var token = await _authService.GetTokenAsync();
+            var httpClient = await _authService.GetAuthenticatedHttpClientAsync();
+            var token = httpClient.DefaultRequestHeaders.Authorization?.Parameter;
 
             if (string.IsNullOrEmpty(token))
             {
@@ -75,6 +76,34 @@ namespace Booking.MAUI.ViewModels
                 await LoadBookingsAsync();
             }
         }
+        //private async Task CancelBookingAsync()
+        //{
+        //    if (SelectedBooking == null)
+        //    {
+        //        await Application.Current.MainPage.DisplayAlert("Error", "Please select a booking to cancel.", "OK");
+        //        return;
+        //    }
+
+        //    try
+        //    {
+        //        var response = await _bookingService.CancelBookingAsync(SelectedBooking.Id);
+        //        if (response)
+        //        {
+        //            Bookings.Remove(SelectedBooking);
+        //            SelectedBooking = null; // Reset the selected booking
+        //            await Application.Current.MainPage.DisplayAlert("Success", "Booking canceled successfully.", "OK");
+        //        }
+        //        else
+        //        {
+        //            await Application.Current.MainPage.DisplayAlert("Error", "Failed to cancel the booking. Please try again.", "OK");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Application.Current.MainPage.DisplayAlert("Error", $"An error occurred while canceling the booking: {ex.Message}", "OK");
+        //    }
+        //}
+
 
         private async Task UpdateBookingAsync()
         {

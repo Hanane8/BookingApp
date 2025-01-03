@@ -77,6 +77,7 @@ namespace Booking.API.Controllers
 
 
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> LogoutUser()
         {
             try

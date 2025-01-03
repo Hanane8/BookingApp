@@ -55,7 +55,6 @@ namespace Booking.MAUI
             builder.Services.AddScoped<LoginPage>();
             builder.Services.AddScoped<HomeViewModel>();
             builder.Services.AddScoped<LoginViewModel>();
-            builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<MyBookingsPage>();
             builder.Services.AddScoped<MyBookingsViewModel>();
            

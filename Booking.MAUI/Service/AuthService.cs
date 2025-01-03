@@ -23,11 +23,11 @@ namespace Booking.MAUI.Service
             return !string.IsNullOrEmpty(token);
         }
 
-        public async Task<string?> LoginAsync(LoginRequestDto dto)
+        public async Task<string?> LoginAsync(LoginDto loginDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/User/login", dto);
+                var response = await _httpClient.PostAsJsonAsync("api/User/login", loginDto);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -109,11 +109,11 @@ namespace Booking.MAUI.Service
         public Guid UserId { get; set; }
     }
 
-    public class LoginRequestDto
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-    }
+    //public class LoginRequestDto
+    //{
+    //    public string UserName { get; set; }
+    //    public string Password { get; set; }
+    //}
 
     public class AuthResponseDto
     {
