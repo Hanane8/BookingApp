@@ -10,8 +10,11 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout>
-                        <Label Text="{Binding Performance.Title}" FontSize="20" />
+                        <Label Text="Performance Details:" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="{Binding Performance.Location}" FontSize="14" />
                         <Label Text="{Binding Performance.DateTime}" FontSize="14" />
+                        <Label Text="{Binding Performance.Concert.Title}" FontSize="14" />
+
                         <StackLayout Orientation="Horizontal">
                             <Button Text="Update" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.UpdateBookingCommand}" />
                             <Button Text="Cancel" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CancelBookingCommand}" />

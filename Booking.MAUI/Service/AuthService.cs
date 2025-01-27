@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Booking.App.DTOs;
@@ -13,8 +14,12 @@ namespace Booking.MAUI.Service
 
         public AuthService(HttpClient httpClient)
         {
+            var baseUrl = DeviceInfo.Platform == DevicePlatform.Android
+                ? "http://10.0.2.2:5133" // Android-emulatorns "localhost"
+                : "http://localhost:5133"; // Utvecklingsmaskinens "localhost"
+
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("http://localhost:5133");
+            _httpClient.BaseAddress = new Uri(baseUrl);
         }
 
         public async Task<bool> IsUserAuthenticated()
@@ -36,6 +41,7 @@ namespace Booking.MAUI.Service
                     if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
                     {
                         await SecureStorage.SetAsync("jwt_token", loginResponse.Token);
+                        Console.WriteLine($"Token saved: {loginResponse.Token}");
                         return loginResponse.Token;
                     }
                     else
@@ -60,19 +66,34 @@ namespace Booking.MAUI.Service
             var token = await SecureStorage.GetAsync("jwt_token");
             if (string.IsNullOrEmpty(token))
             {
+                Console.WriteLine("Token is null or empty.");
                 return null;
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.GetAsync("api/User/me");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync("api/User/myBookings");
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                // Assuming the response contains the authenticated user's information
+                var bookings = await response.Content.ReadFromJsonAsync<List<BookingDto>>();
+                if (bookings != null && bookings.Any())
+                {
+                    var user = new AuthResponseDto
+                    {
+                        UserId = bookings.First().UserId,
+                        UserName = "DummyUserName", 
+                        Email = "DummyEmail@example.com" 
+                    };
+                    Console.WriteLine($"Authenticated user: {user.UserId}");
+                    return user;
+                }
             }
 
+            Console.WriteLine($"Failed to get authenticated user. Status code: {response.StatusCode}");
             return null;
         }
+
 
         public async Task<HttpClient> GetAuthenticatedHttpClientAsync()
         {
@@ -101,6 +122,24 @@ namespace Booking.MAUI.Service
                 return new LogoutResponse { Success = false, Message = $"Logout failed: {errorDetails}" };
             }
         }
+        public async Task<List<BookingDto>> GetMyBookingsAsync()
+        {
+            var token = await SecureStorage.GetAsync("jwt_token");
+            if (string.IsNullOrEmpty(token))
+            {
+                return null;
+            }
+
+            var httpClient = await GetAuthenticatedHttpClientAsync();
+            var response = await httpClient.GetAsync("api/User/myBookings");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<BookingDto>>();
+            }
+
+            return null;
+        }
     }
     
     public class LoginResponse
@@ -108,15 +147,9 @@ namespace Booking.MAUI.Service
         public string Token { get; set; }
         public Guid UserId { get; set; }
     }
-
-    //public class LoginRequestDto
-    //{
-    //    public string UserName { get; set; }
-    //    public string Password { get; set; }
-    //}
-
     public class AuthResponseDto
     {
+        public Guid UserId { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
     }

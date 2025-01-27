@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using System.Windows.Input;
 using Booking.MAUI.Service;
+using System;
 
 namespace Booking.MAUI.ViewModels
 {
@@ -33,28 +34,30 @@ namespace Booking.MAUI.ViewModels
         // Load Bookings for the current user
         public async Task LoadBookingsAsync()
         {
-            var httpClient = await _authService.GetAuthenticatedHttpClientAsync();
-            var token = httpClient.DefaultRequestHeaders.Authorization?.Parameter;
+            var authenticatedUser = await _authService.GetAuthenticatedUserAsync();
 
-            if (string.IsNullOrEmpty(token))
+            if (authenticatedUser == null)
             {
+                Console.WriteLine("Authenticated user is null.");
                 await Application.Current.MainPage.DisplayAlert("Error", "You must be logged in to view your bookings.", "OK");
                 return;
             }
-            if (!Guid.TryParse(token, out Guid userId))
+
+            Console.WriteLine($"Authenticated user ID: {authenticatedUser.UserId}");
+
+            var bookings = await _authService.GetMyBookingsAsync();
+            if (bookings == null)
             {
-                // Handle invalid GUID format
-                await Application.Current.MainPage.DisplayAlert("Error", "Invalid user ID format.", "OK");
+                Console.WriteLine("Failed to retrieve bookings.");
+                await Application.Current.MainPage.DisplayAlert("Error", "Failed to retrieve bookings.", "OK");
                 return;
             }
 
-            var bookings = await _bookingService.GetBookingsForUserAsync(userId);
             Bookings.Clear();
             foreach (var booking in bookings)
             {
                 Bookings.Add(booking);
             }
-
         }
 
         private async Task CancelBookingAsync()
@@ -76,41 +79,13 @@ namespace Booking.MAUI.ViewModels
                 await LoadBookingsAsync();
             }
         }
-        //private async Task CancelBookingAsync()
-        //{
-        //    if (SelectedBooking == null)
-        //    {
-        //        await Application.Current.MainPage.DisplayAlert("Error", "Please select a booking to cancel.", "OK");
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        var response = await _bookingService.CancelBookingAsync(SelectedBooking.Id);
-        //        if (response)
-        //        {
-        //            Bookings.Remove(SelectedBooking);
-        //            SelectedBooking = null; // Reset the selected booking
-        //            await Application.Current.MainPage.DisplayAlert("Success", "Booking canceled successfully.", "OK");
-        //        }
-        //        else
-        //        {
-        //            await Application.Current.MainPage.DisplayAlert("Error", "Failed to cancel the booking. Please try again.", "OK");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await Application.Current.MainPage.DisplayAlert("Error", $"An error occurred while canceling the booking: {ex.Message}", "OK");
-        //    }
-        //}
-
 
         private async Task UpdateBookingAsync()
         {
             if (SelectedBooking == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "Please select a booking to update.", "OK");
-                return;
+                return; 
             }
 
             await Application.Current.MainPage.DisplayAlert("Update", "Update functionality is not yet implemented.", "OK");

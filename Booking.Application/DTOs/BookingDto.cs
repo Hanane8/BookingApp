@@ -14,6 +14,6 @@ namespace Booking.App.DTOs
         public DateTime BookingDate { get; set; }
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
-        public Guid UserId { get; set; } // Ny egenskap för att hantera användaren
+        public Guid UserId { get; set; } 
     }
 }

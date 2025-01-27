@@ -9,18 +9,65 @@
                      IsEnabled="{Binding IsLoggedIn}"
                      Priority="0"/>
     </ContentPage.ToolbarItems>
-   
-    <StackLayout Padding="20" VerticalOptions="Center">
-        <!-- Username -->
-        <Entry Placeholder="Username" Text="{Binding UserName}" />
+    <ScrollView>
+        <Grid BackgroundColor="White">
 
-        <!-- Password -->
-        <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="True" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="220"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
 
-        <!-- Login Button -->
-        <Button Text="Login"
-                Command="{Binding LoginCommand}"
-                IsVisible="{Binding IsNotLoggedIn}" />
+        <Grid>
+            <Path Stroke="AliceBlue" Data="M0,0 L0,150 C225,300 375,150 450,150 L450,0" Fill="SkyBlue" />
+            <Border BackgroundColor="SkyBlue" HeightRequest="60" StrokeShape="RoundRectangle 30" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                <Image Source="user.png" />
+            </Border>
+        </Grid>
 
-    </StackLayout>
+        <Grid RowSpacing="5" Grid.Row="1" Margin="20,20,20,0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label  Grid.Row="1" Text="Welcome!" HorizontalOptions="Center" FontSize="Title" FontAttributes="Bold" Padding="10" Margin="0"/>
+            <Label  Grid.Row="2" Text="Login to your account" HorizontalOptions="Center" FontSize="Subtitle" />
+
+            <StackLayout Grid.Row="3" Orientation="Vertical" HorizontalOptions="CenterAndExpand">
+                <Border BackgroundColor="Transparent" Stroke="LightGreen" Padding="0" HorizontalOptions="FillAndExpand" StrokeShape="RoundRectangle 30">
+                    <StackLayout Orientation="Horizontal">
+                        <Border BackgroundColor="SkyBlue" HeightRequest="40" WidthRequest="40" StrokeShape="RoundRectangle 30" Padding="5">
+                            <Image Source="user1.png" Aspect="AspectFill" Margin="0" />
+                        </Border>
+                        <Entry Placeholder="Username" Text="{Binding UserName}" TextColor="Black" VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+                    </StackLayout>
+                </Border>
+                <Border BackgroundColor="Transparent" Stroke="LightGreen" Margin="0,15,0,0" Padding="0" HorizontalOptions="FillAndExpand" StrokeShape="RoundRectangle 30">
+                    <StackLayout Orientation="Horizontal">
+                        <Border BackgroundColor="SkyBlue" HeightRequest="40" WidthRequest="40" StrokeShape="RoundRectangle 30" Padding="5">
+                            <Image Source="password.png" Aspect="AspectFill" Margin="0" />
+                        </Border>
+                            <Entry Placeholder="Password" Text="{Binding Password}" TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="FillAndExpand" Margin="0,0,20,0" IsPassword="True" />
+                        </StackLayout>
+                </Border>
+                    <StackLayout Orientation="Horizontal" Margin="0,10,0,0" Padding="0" >
+                    <CheckBox IsChecked="{Binding RememberMe}" />
+                        <Label Text="Remember me" TextColor="DarkGray" FontSize="Small" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                        <Label Text="Forgot Password?" TextColor="#108348" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="Center" Margin="20,0,0,0"  />
+                </StackLayout>
+                <Button Text="SIGN IN" BackgroundColor="#58D68D" TextColor="White" FontAttributes="Bold" CornerRadius="30" Margin="0,15,0,0" WidthRequest="200" Command="{Binding LoginCommand}" IsVisible="{Binding IsNotLoggedIn}"/>
+
+                <StackLayout HorizontalOptions="Center" Margin="0,20,0,0">
+                    <Label Text="Don't have an account?" TextColor="DarkGray" FontSize="Small" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                    <Label Text="SIGN UP" TextColor="#108348" FontAttributes="Bold" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+                </StackLayout>
+            </StackLayout>
+        </Grid>
+    </Grid>
+    </ScrollView>
 </ContentPage>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 public class LoginViewModel : BindableObject
 {
@@ -18,12 +19,13 @@ public class LoginViewModel : BindableObject
         _authService = authService;
         LoginCommand = new Command(async () => await LoginAsync());
         LogoutCommand = new Command(async () => await LogoutAsync());
-
-       
-        IsLoggedIn = !string.IsNullOrEmpty(SecureStorage.GetAsync("auth_token").Result);
+        InitializeIsLoggedIn();
     }
 
-   
+    private async void InitializeIsLoggedIn()
+    {
+        IsLoggedIn = !string.IsNullOrEmpty(await SecureStorage.GetAsync("auth_token"));
+    }
 
     public string UserName
     {
@@ -51,18 +53,16 @@ public class LoginViewModel : BindableObject
         set
         {
             _isLoggedIn = value;
-            OnPropertyChanged(nameof(IsLoggedIn)); // Skicka med namnet på egenskapen
-            OnPropertyChanged(nameof(IsNotLoggedIn)); // Update the opposite property for visibility
+            OnPropertyChanged(nameof(IsLoggedIn)); 
+            OnPropertyChanged(nameof(IsNotLoggedIn)); 
         }
     }
 
-    // This is the opposite of IsLoggedIn and helps to control visibility of Login button
     public bool IsNotLoggedIn => !IsLoggedIn;
 
     public ICommand LoginCommand { get; }
     public ICommand LogoutCommand { get; }
 
-    // Method for logging in the user
     private async Task LoginAsync()
     {
         try
@@ -70,34 +70,33 @@ public class LoginViewModel : BindableObject
             var loginDto = new LoginDto { UserName = UserName, Password = Password };
             var token = await _authService.LoginAsync(loginDto);
 
-            // Store the token securely
-            await SecureStorage.SetAsync("auth_token", token);
-            IsLoggedIn = true;  // Set logged-in state to true
+            await SecureStorage.SetAsync("auth_token", token!);
+            IsLoggedIn = true;
 
-            // Navigate to HomePage after login
+
             await Shell.Current.GoToAsync("//HomePage");
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Error", "Ett fel inträffade under inloggningen: " + ex.Message, "OK");
+           
+            Debug.WriteLine("LoginAsync fel: " + ex.Message);
         }
     }
 
-    // Method for logging out the user
     private async Task LogoutAsync()
     {
         try
         {
-            await _authService.LogoutUserAsync();  // Perform logout via the service
-            SecureStorage.Remove("auth_token");  // Remove the token from secure storage
-            IsLoggedIn = false;  // Set logged-out state to false
+            await _authService.LogoutUserAsync();  
+            SecureStorage.Remove("auth_token");  
+            IsLoggedIn = false;  
 
-            // Navigate to LoginPage after logout
             await Shell.Current.GoToAsync("//LoginPage");
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
         }
     }
 }

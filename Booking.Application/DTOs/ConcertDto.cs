@@ -11,6 +11,6 @@ namespace Booking.App.DTOs
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public ICollection<PerformanceDto> Performances { get; set; }
+        //public ICollection<PerformanceDto> Performances { get; set; }
     }
 }

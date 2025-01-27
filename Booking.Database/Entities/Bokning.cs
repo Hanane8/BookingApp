@@ -11,8 +11,8 @@ namespace Booking.Database.Entities
         public int Id { get; set; }
         public int PerformanceId { get; set; }
         public Performance Performance { get; set; }
-        public Guid? UserId { get; set; } // Tillåter null om det inte krävs
-        public User User { get; set; }    // Navigeringsproperty
+        public Guid? UserId { get; set; } 
+        public User User { get; set; }    
         public DateTime BookingDate { get; set; }
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
