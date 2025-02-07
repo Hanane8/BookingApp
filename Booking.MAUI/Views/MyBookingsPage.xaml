@@ -4,24 +4,39 @@
              x:Class="Booking.MAUI.Views.MyBookingsPage"
              Title="My Bookings">
 
-    <StackLayout Padding="10">
-        <!-- List of Bookings -->
-        <CollectionView ItemsSource="{Binding Bookings}" SelectionMode="Single" SelectedItem="{Binding SelectedBooking}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout>
-                        <Label Text="Performance Details:" FontSize="16" FontAttributes="Bold" />
-                        <Label Text="{Binding Performance.Location}" FontSize="14" />
-                        <Label Text="{Binding Performance.DateTime}" FontSize="14" />
-                        <Label Text="{Binding Performance.Concert.Title}" FontSize="14" />
+    <ScrollView>
+        <StackLayout Padding="10">
+            <CollectionView ItemsSource="{Binding Bookings}" SelectionMode="Single" SelectedItem="{Binding SelectedBooking}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+                            <StackLayout Grid.Column="0">
+                                <Label Text="Performance Details:" FontSize="16" FontAttributes="Bold" />
+                                <Label Text="{Binding Performance.Location}" FontSize="14" />
+                                <Label Text="{Binding Performance.DateTime}" FontSize="14" />
+                                <Label Text="{Binding Performance.Concert.Title}" FontSize="14" />
+                            </StackLayout>
+                            <StackLayout Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                                <ImageButton Source="edit.jpg"
+                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.UpdateBookingCommand}"
+                                     BackgroundColor="Transparent"
+                                     WidthRequest="20"
+                                     HeightRequest="20"
+                                     Padding="0"
+                                     Aspect="AspectFit"/>
+                                <ImageButton Source="delete2.jpg"
+                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CancelBookingCommand}"
+                                     BackgroundColor="Transparent"
+                                     WidthRequest="10"
+                                     HeightRequest="10"
+                                     Padding="0"
+                                     Aspect="AspectFit"/>
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
 
-                        <StackLayout Orientation="Horizontal">
-                            <Button Text="Update" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.UpdateBookingCommand}" />
-                            <Button Text="Cancel" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CancelBookingCommand}" />
-                        </StackLayout>
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </StackLayout>
+    </ScrollView>
 </ContentPage>

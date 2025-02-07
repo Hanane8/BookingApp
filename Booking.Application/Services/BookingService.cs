@@ -93,10 +93,8 @@ namespace Booking.App.Services
                 throw new Exception("Booking not found.");
             }
 
-            // Uppdatera entiteten med de nya värdena från DTO
             _mapper.Map(updatedBooking, booking);
 
-            // Spara ändringar i databasen
             _unitOfWork.BookingRepository.Update(booking);
             await _unitOfWork.SaveAsync();
         }

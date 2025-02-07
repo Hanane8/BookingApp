@@ -32,7 +32,6 @@ namespace Booking.MAUI.ViewModels
             LoadBookingsAsync();
         }
 
-        // Load Bookings for the current user
         public async Task LoadBookingsAsync()
         {
             var authenticatedUser = await _authService.GetAuthenticatedUserAsync();
@@ -76,7 +75,6 @@ namespace Booking.MAUI.ViewModels
                 await _bookingService.CancelBookingAsync(SelectedBooking.Id);
                 await Application.Current.MainPage.DisplayAlert("Success", "Booking canceled successfully!", "OK");
 
-                // Reload the bookings
                 await LoadBookingsAsync();
             }
         }
