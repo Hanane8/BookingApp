@@ -1,0 +1,19 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Booking.MAUI.ViewModels"
+             x:Class="Booking.MAUI.Views.UpdateBookingPage"
+             Title="Update Booking">
+
+   
+    <StackLayout Padding="10">
+        <Label Text="Update Booking" FontSize="20" FontAttributes="Bold" />
+
+        <Label Text="Location" />
+        <Entry Text="{Binding Booking.Performance.Location}" />
+
+        <Label Text="Date and Time" />
+        <Entry Text="{Binding Booking.Performance.DateTime}" />
+
+        <Button Text="Save" Command="{Binding SaveBookingCommand}" />
+    </StackLayout>
+</ContentPage>

@@ -9,6 +9,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -83,6 +84,21 @@ namespace Booking.App.Services
         {
             var bookings = await _unitOfWork.BookingRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<BookingDto>>(bookings);
+        }
+        public async Task UpdateBookingAsync(int bookingId, BookingDto updatedBooking)
+        {
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
+            if (booking == null)
+            {
+                throw new Exception("Booking not found.");
+            }
+
+            // Uppdatera entiteten med de nya värdena från DTO
+            _mapper.Map(updatedBooking, booking);
+
+            // Spara ändringar i databasen
+            _unitOfWork.BookingRepository.Update(booking);
+            await _unitOfWork.SaveAsync();
         }
 
         public async Task<BookingDto> GetBookingByIdAsync(int bookingId)

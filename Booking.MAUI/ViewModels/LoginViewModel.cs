@@ -70,19 +70,24 @@ public class LoginViewModel : BindableObject
             var loginDto = new LoginDto { UserName = UserName, Password = Password };
             var token = await _authService.LoginAsync(loginDto);
 
-            await SecureStorage.SetAsync("auth_token", token!);
-            IsLoggedIn = true;
+            if (token == null)
+            {
+                throw new Exception("Login failed: Token is null or empty.");
+            }
 
+            await SecureStorage.SetAsync("jwt_token", token!); // Ensure token is saved
+            IsLoggedIn = true;
 
             await Shell.Current.GoToAsync("//HomePage");
         }
         catch (Exception ex)
         {
+            // Log detailed error information
             await Shell.Current.DisplayAlert("Error", "Ett fel inträffade under inloggningen: " + ex.Message, "OK");
-           
-            Debug.WriteLine("LoginAsync fel: " + ex.Message);
+            Debug.WriteLine("LoginAsync Error: " + ex.Message);
         }
     }
+
 
     private async Task LogoutAsync()
     {

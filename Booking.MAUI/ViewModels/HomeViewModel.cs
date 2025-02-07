@@ -57,13 +57,22 @@ namespace Booking.MAUI.ViewModels
 
         public async Task LoadConcertsAsync()
         {
-            var concerts = await _bookingService.GetAllConcertsAsync();
-            Concerts.Clear();
-            foreach (var concert in concerts)
+            try
             {
-                Concerts.Add(concert);
+                var concerts = await _bookingService.GetAllConcertsAsync();
+                Concerts.Clear();
+                foreach (var concert in concerts)
+                {
+                    Concerts.Add(concert);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading concerts: {ex.Message}");
+                await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load concerts: {ex.Message}", "OK");
             }
         }
+
 
         // Load Performances for a selected concert
         private async void LoadPerformances()

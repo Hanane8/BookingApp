@@ -21,6 +21,8 @@ namespace Booking.App.Services
         Task DeletePerformanceAsync(int performanceId);
         Task<IEnumerable<PerformanceDto>> GetPerformancesByConcertIdAsync(int concertId);
         Task<IEnumerable<BookingDto>> GetBookingsForUserAsync(Guid userId);
+        Task UpdateBookingAsync(int bookingId, BookingDto updatedBooking);
+
 
 
     }

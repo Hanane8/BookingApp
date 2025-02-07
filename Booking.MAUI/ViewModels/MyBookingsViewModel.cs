@@ -6,6 +6,7 @@ using Microsoft.Maui.Controls;
 using System.Windows.Input;
 using Booking.MAUI.Service;
 using System;
+using Booking.MAUI.Views;
 
 namespace Booking.MAUI.ViewModels
 {
@@ -85,10 +86,17 @@ namespace Booking.MAUI.ViewModels
             if (SelectedBooking == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "Please select a booking to update.", "OK");
-                return; 
+                return;
             }
 
-            await Application.Current.MainPage.DisplayAlert("Update", "Update functionality is not yet implemented.", "OK");
+            var updatePage = new UpdateBookingPage();
+            var updateViewModel = new UpdateBookingViewModel(_bookingService);
+            updateViewModel.LoadBooking(SelectedBooking);
+
+            updatePage.BindingContext = updateViewModel;
+
+            await Application.Current.MainPage.Navigation.PushAsync(updatePage);
         }
+
     }
 }
