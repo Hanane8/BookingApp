@@ -19,10 +19,10 @@ namespace Booking.App.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly BookingContext _context;
+        private readonly BokningContext _context;
         private readonly IValidator<BookingDto> _bookingValidator;
         private readonly HttpClient _httpClient;
-        public BookingService(IUnitOfWork unitOfWork, IMapper mapper, BookingContext context, IValidator<BookingDto> bookingValidator, HttpClient httpClient)
+        public BookingService(IUnitOfWork unitOfWork, IMapper mapper, BokningContext context, IValidator<BookingDto> bookingValidator, HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

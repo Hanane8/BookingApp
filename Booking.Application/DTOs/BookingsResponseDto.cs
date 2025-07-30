@@ -8,7 +8,7 @@ namespace Booking.App.DTOs
 {
     public class BookingsResponseDto
     {
-        public List<BookingDto> Bookings { get; set; }
+        public List<BookingDto> Boknings { get; set; }
         public Guid UserId { get; set; }
     }
 }

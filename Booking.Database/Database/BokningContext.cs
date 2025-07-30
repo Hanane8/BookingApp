@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Database.Database
 {
-    public class BookingContext : DbContext
+    public class BokningContext : DbContext
     {
         public DbSet<Concert> Concerts { get; set; }
         public DbSet<Performance> Performances { get; set; }
-        public DbSet<Bokning> Bookings { get; set; }
+        public DbSet<Bokning> Boknings { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public BookingContext(DbContextOptions<BookingContext> options) : base(options) { }
+        public BokningContext(DbContextOptions<BokningContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,7 +28,7 @@ namespace Booking.Database.Database
 
             modelBuilder.Entity<Bokning>()
                 .HasOne(b => b.Performance)
-                .WithMany(p => p.Bookings)
+                .WithMany(p => p.Boknings)
                 .HasForeignKey(b => b.PerformanceId);
 
             // Lägg till relation mellan Bokning och User

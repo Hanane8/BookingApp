@@ -12,10 +12,10 @@ namespace Booking.Database.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly BookingContext _context;
+        private readonly BokningContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public Repository(BookingContext context)
+        public Repository(BokningContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();

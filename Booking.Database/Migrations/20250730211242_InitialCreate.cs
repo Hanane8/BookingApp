@@ -61,42 +61,41 @@ namespace Booking.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookings",
+                name: "Boknings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PerformanceId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.PrimaryKey("PK_Boknings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Performances_PerformanceId",
+                        name: "FK_Boknings_Performances_PerformanceId",
                         column: x => x.PerformanceId,
                         principalTable: "Performances",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Bookings_Users_UserId",
+                        name: "FK_Boknings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_PerformanceId",
-                table: "Bookings",
+                name: "IX_Boknings_PerformanceId",
+                table: "Boknings",
                 column: "PerformanceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_UserId",
-                table: "Bookings",
+                name: "IX_Boknings_UserId",
+                table: "Boknings",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -109,7 +108,7 @@ namespace Booking.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "Boknings");
 
             migrationBuilder.DropTable(
                 name: "Performances");

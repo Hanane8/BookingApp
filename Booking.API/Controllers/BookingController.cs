@@ -61,8 +61,8 @@ namespace Booking.API.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAllBookings()
         {
-            var bookings = await _bookingService.GetAllBookingsAsync();
-            return Ok(bookings);
+            var Boknings = await _bookingService.GetAllBookingsAsync();
+            return Ok(Boknings);
         }
 
         [HttpGet("{id}")]

@@ -35,7 +35,7 @@ namespace Booking.MAUI
 
             builder.Services.AddSingleton<AuthService>();
 
-            builder.Services.AddDbContext<BookingContext>(options =>
+            builder.Services.AddDbContext<BokningContext>(options =>
             {
                 options.UseSqlServer("Server=Hanane\\SQLEXPRESS01; Database=BookingApp; Trusted_Connection=True; TrustServerCertificate=True;");
             });

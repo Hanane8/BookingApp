@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Booking.Database.Migrations
 {
-    [DbContext(typeof(BookingContext))]
-    [Migration("20250101132818_InitialCreate")]
+    [DbContext(typeof(BokningContext))]
+    [Migration("20250730211242_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,15 +37,17 @@ namespace Booking.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerEmail")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PerformanceId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -54,7 +56,7 @@ namespace Booking.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Boknings");
                 });
 
             modelBuilder.Entity("Booking.Database.Entities.Concert", b =>
@@ -129,16 +131,14 @@ namespace Booking.Database.Migrations
             modelBuilder.Entity("Booking.Database.Entities.Bokning", b =>
                 {
                     b.HasOne("Booking.Database.Entities.Performance", "Performance")
-                        .WithMany("Bookings")
+                        .WithMany("Boknings")
                         .HasForeignKey("PerformanceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Booking.Database.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Performance");
 
@@ -163,7 +163,7 @@ namespace Booking.Database.Migrations
 
             modelBuilder.Entity("Booking.Database.Entities.Performance", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Boknings");
                 });
 #pragma warning restore 612, 618
         }

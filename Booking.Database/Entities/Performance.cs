@@ -13,7 +13,7 @@ namespace Booking.Database.Entities
         public string Location { get; set; }
         public int ConcertId { get; set; }
         public Concert Concert { get; set; }
-        public ICollection<Bokning> Bookings { get; set; } = new List<Bokning>();
+        public ICollection<Bokning> Boknings { get; set; } = new List<Bokning>();
     }
 }
 

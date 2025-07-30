@@ -78,7 +78,7 @@ builder.Services.AddHttpClient<IUserService, UserService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 
 // Register DbContext
-builder.Services.AddDbContext<BookingContext>(options =>
+builder.Services.AddDbContext<BokningContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(options =>

@@ -59,13 +59,13 @@ namespace Booking.API.Controllers
                     return Unauthorized("User ID not found.");
                 }
 
-                var bookings = await _bookingService.GetBookingsForUserAsync(Guid.Parse(userId));
-                if (bookings == null || !bookings.Any())
+                var boknings = await _bookingService.GetBookingsForUserAsync(Guid.Parse(userId));
+                if (boknings == null || !boknings.Any())
                 {
                     return NotFound("No bookings found for the logged-in user.");
                 }
 
-                return Ok(bookings);
+                return Ok(boknings);
             }
             catch (Exception ex)
             {

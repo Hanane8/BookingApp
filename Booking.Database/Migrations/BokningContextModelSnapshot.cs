@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Booking.Database.Migrations
 {
-    [DbContext(typeof(BookingContext))]
-    partial class BookingContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BokningContext))]
+    partial class BokningContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -53,7 +53,7 @@ namespace Booking.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Boknings");
                 });
 
             modelBuilder.Entity("Booking.Database.Entities.Concert", b =>
@@ -128,7 +128,7 @@ namespace Booking.Database.Migrations
             modelBuilder.Entity("Booking.Database.Entities.Bokning", b =>
                 {
                     b.HasOne("Booking.Database.Entities.Performance", "Performance")
-                        .WithMany("Bookings")
+                        .WithMany("Boknings")
                         .HasForeignKey("PerformanceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -160,7 +160,7 @@ namespace Booking.Database.Migrations
 
             modelBuilder.Entity("Booking.Database.Entities.Performance", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Boknings");
                 });
 #pragma warning restore 612, 618
         }

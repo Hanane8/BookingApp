@@ -13,7 +13,7 @@ namespace Booking.Database.DataSeedHelper
         public static void Seed(IServiceProvider serviceProvider)
         {
             var logger = serviceProvider.GetRequiredService<ILogger<SeedHelper>>();
-            var context = serviceProvider.GetRequiredService<BookingContext>();
+            var context = serviceProvider.GetRequiredService<BokningContext>();
             var passwordHasher = new PasswordHasher<User>();
 
             try
@@ -102,7 +102,7 @@ namespace Booking.Database.DataSeedHelper
                 }
 
                 // Seed Bookings
-                if (!context.Bookings.Any())
+                if (!context.Boknings.Any())
                 {
                     var performance = context.Performances.FirstOrDefault();
 
@@ -111,7 +111,7 @@ namespace Booking.Database.DataSeedHelper
 
                     if (performance != null && user1 != null && user2 != null)
                     {
-                        var bookings = new[]
+                        var boknings = new[]
                         {
                             new Bokning
                             {
@@ -131,7 +131,7 @@ namespace Booking.Database.DataSeedHelper
                             }
                         };
 
-                        context.Bookings.AddRange(bookings);
+                        context.Boknings.AddRange(boknings);
                         context.SaveChanges();
 
                         logger.LogInformation("Bookings seeded successfully.");

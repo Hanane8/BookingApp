@@ -11,10 +11,10 @@ namespace Booking.Database.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly BookingContext _context;
+        private readonly BokningContext _context;
         
 
-        public UnitOfWork(BookingContext context)
+        public UnitOfWork(BokningContext context)
         {
             _context = context;
             ConcertRepository = new Repository<Concert>(context);
