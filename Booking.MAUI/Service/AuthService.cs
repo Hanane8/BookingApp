@@ -27,8 +27,11 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var fullUrl = $"{Constants.BaseUrl}/api/User/login";
+                var fullUrl = "/api/User/login";
+                Console.WriteLine($"LoginAsync: Making request to: {_httpClient.BaseAddress}{fullUrl}");
                 var response = await _httpClient.PostAsJsonAsync(fullUrl, loginDto);
+
+                Console.WriteLine($"LoginAsync: Response status: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -37,22 +40,26 @@ namespace Booking.MAUI.Service
                     if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
                     {
                         await SecureStorage.SetAsync("jwt_token", loginResponse.Token);
-                        Console.WriteLine($"Token saved: {loginResponse.Token}");
+                        Console.WriteLine($"LoginAsync: Token saved successfully, length: {loginResponse.Token.Length}");
+                        Console.WriteLine($"LoginAsync: Token starts with: {loginResponse.Token.Substring(0, Math.Min(50, loginResponse.Token.Length))}...");
                         return loginResponse.Token;
                     }
                     else
                     {
+                        Console.WriteLine("LoginAsync: Login failed: Token is null or empty.");
                         throw new Exception("Login failed: Token is null or empty.");
                     }
                 }
                 else
                 {
                     var errorDetails = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"LoginAsync: Login failed with status {response.StatusCode}: {errorDetails}");
                     throw new Exception($"Login failed: {errorDetails}");
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"LoginAsync: Exception occurred: {ex.Message}");
                 throw new Exception($"An error occurred during login: {ex.Message}");
             }
         }
@@ -62,13 +69,18 @@ namespace Booking.MAUI.Service
             var token = await SecureStorage.GetAsync("jwt_token");
             if (string.IsNullOrEmpty(token))
             {
-                Console.WriteLine("Token is null or empty.");
+                Console.WriteLine("GetAuthenticatedUserAsync: Token is null or empty.");
                 return null;
             }
 
+            Console.WriteLine($"GetAuthenticatedUserAsync: Token found, length: {token.Length}");
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var fullUrl = $"{Constants.BaseUrl}/api/User/myBookings";
+            var fullUrl = "/api/User/myBookings";
+            Console.WriteLine($"GetAuthenticatedUserAsync: Making request to: {_httpClient.BaseAddress}{fullUrl}");
             var response = await _httpClient.GetAsync(fullUrl);
+
+            Console.WriteLine($"GetAuthenticatedUserAsync: Response status: {response.StatusCode}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -82,12 +94,21 @@ namespace Booking.MAUI.Service
                         UserName = "DummyUserName", 
                         Email = "DummyEmail@example.com" 
                     };
-                    Console.WriteLine($"Authenticated user: {user.UserId}");
+                    Console.WriteLine($"GetAuthenticatedUserAsync: Authenticated user: {user.UserId}");
                     return user;
                 }
+                else
+                {
+                    Console.WriteLine("GetAuthenticatedUserAsync: No bookings found for user");
+                }
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"GetAuthenticatedUserAsync: Error response: {errorContent}");
             }
 
-            Console.WriteLine($"Failed to get authenticated user. Status code: {response.StatusCode}");
+            Console.WriteLine($"GetAuthenticatedUserAsync: Failed to get authenticated user. Status code: {response.StatusCode}");
             return null;
         }
 
@@ -104,9 +125,8 @@ namespace Booking.MAUI.Service
 
         public async Task<LogoutResponse> LogoutUserAsync()
         {
-            var httpClient = await GetAuthenticatedHttpClientAsync();
-            var fullUrl = $"{Constants.BaseUrl}/api/User/logout";
-            var response = await httpClient.PostAsync(fullUrl, null);
+            var fullUrl = "/api/User/logout";
+            var response = await _httpClient.PostAsync(fullUrl, null);
 
             if (response.IsSuccessStatusCode)
             {
@@ -125,16 +145,30 @@ namespace Booking.MAUI.Service
             var token = await SecureStorage.GetAsync("jwt_token");
             if (string.IsNullOrEmpty(token))
             {
+                Console.WriteLine("GetMyBookingsAsync: Token is null or empty");
                 return null;
             }
 
-            var httpClient = await GetAuthenticatedHttpClientAsync();
-            var fullUrl = $"{Constants.BaseUrl}/api/User/myBookings";
-            var response = await httpClient.GetAsync(fullUrl);
+            Console.WriteLine($"GetMyBookingsAsync: Token found, length: {token.Length}");
+            Console.WriteLine($"GetMyBookingsAsync: Token starts with: {token.Substring(0, Math.Min(50, token.Length))}...");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var fullUrl = "/api/User/myBookings";
+            Console.WriteLine($"GetMyBookingsAsync: Making request to: {_httpClient.BaseAddress}{fullUrl}");
+            
+            var response = await _httpClient.GetAsync(fullUrl);
+            Console.WriteLine($"GetMyBookingsAsync: Response status: {response.StatusCode}");
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<List<BookingDto>>();
+                var bookings = await response.Content.ReadFromJsonAsync<List<BookingDto>>();
+                Console.WriteLine($"GetMyBookingsAsync: Successfully retrieved {bookings?.Count ?? 0} bookings");
+                return bookings;
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"GetMyBookingsAsync: Error response: {errorContent}");
             }
 
             return null;

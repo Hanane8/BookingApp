@@ -19,7 +19,7 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var fullUrl = $"{Constants.BaseUrl}/api/Performance";
+                var fullUrl = "/api/Performance";
                 var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
@@ -43,7 +43,7 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var fullUrl = $"{Constants.BaseUrl}/api/Performance/concert/{concertId}";
+                var fullUrl = $"/api/Performance/concert/{concertId}";
                 var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
@@ -67,7 +67,7 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var fullUrl = $"{Constants.BaseUrl}/api/Performance/{id}";
+                var fullUrl = $"/api/Performance/{id}";
                 var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)

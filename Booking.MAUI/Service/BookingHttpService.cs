@@ -22,7 +22,7 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = $"{Constants.BaseUrl}/api/Booking";
+                var fullUrl = "/api/Booking";
                 var response = await authenticatedClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
@@ -47,7 +47,7 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = $"{Constants.BaseUrl}/api/Booking";
+                var fullUrl = "/api/Booking";
                 var response = await authenticatedClient.PostAsJsonAsync(fullUrl, bookPerformanceDto);
                 
                 if (response.IsSuccessStatusCode)
@@ -72,7 +72,7 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = $"{Constants.BaseUrl}/api/Booking/{bookingId}";
+                var fullUrl = $"/api/Booking/{bookingId}";
                 var response = await authenticatedClient.DeleteAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
@@ -96,7 +96,7 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = $"{Constants.BaseUrl}/api/Booking/{id}";
+                var fullUrl = $"/api/Booking/{id}";
                 var response = await authenticatedClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
@@ -121,7 +121,7 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = $"{Constants.BaseUrl}/api/Booking/{bookingId}";
+                var fullUrl = $"/api/Booking/{bookingId}";
                 var response = await authenticatedClient.PutAsJsonAsync(fullUrl, updatedBooking);
                 
                 if (response.IsSuccessStatusCode)
