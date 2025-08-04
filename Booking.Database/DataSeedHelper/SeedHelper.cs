@@ -16,6 +16,8 @@ namespace Booking.Database.DataSeedHelper
             var context = serviceProvider.GetRequiredService<BokningContext>();
             var passwordHasher = new PasswordHasher<User>();
 
+            context.Database.EnsureCreated();
+
             try
             {
                 // Seed Users
