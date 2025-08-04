@@ -6,8 +6,6 @@ using Microsoft.Maui.Controls;
 using System.Windows.Input;
 using System;
 using Booking.MAUI.Service;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Booking.MAUI.ViewModels
 {
@@ -92,38 +90,21 @@ namespace Booking.MAUI.ViewModels
 
         private async Task BookPerformanceAsync()
         {
-            // Get the authenticated HttpClient
-            var httpClient = await _authService.GetAuthenticatedHttpClientAsync();
-            var token = httpClient.DefaultRequestHeaders.Authorization?.Parameter;
-
-            if (string.IsNullOrEmpty(token))
+            // Check if user is authenticated
+            var isAuthenticated = await _authService.IsUserAuthenticated();
+            if (!isAuthenticated)
             {
-                // If the token is null or empty, show an error message
                 await Application.Current.MainPage.DisplayAlert("Error", "You must be logged in to book a performance.", "OK");
                 return;
             }
 
-            // Decode the token into a ClaimsPrincipal
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-
-            if (jsonToken == null)
-            {
-                // If the token is invalid, show an error message
-                await Application.Current.MainPage.DisplayAlert("Error", "Invalid token format.", "OK");
-                return;
-            }
-
-            var claimsIdentity = new ClaimsIdentity(jsonToken.Claims);
-            var currentUser = new ClaimsPrincipal(claimsIdentity);
-
             // Check if a performance is selected
             if (SelectedPerformance == null)
             {
-                // If no performance is selected, do nothing
                 await Application.Current.MainPage.DisplayAlert("Error", "Please select a performance to book.", "OK");
                 return;
             }
+
             // Create a BookPerformanceDto object
             var bookPerformanceDto = new BookPerformanceDto
             {
@@ -137,6 +118,9 @@ namespace Booking.MAUI.ViewModels
 
                 // Show success message
                 await App.Current.MainPage.DisplayAlert("Success", "Performance booked successfully!", "OK");
+                
+                // Optionally refresh the performances list
+                LoadPerformances();
             }
             catch (Exception ex)
             {
