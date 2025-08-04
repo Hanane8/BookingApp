@@ -21,6 +21,7 @@ namespace Booking.App.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(src => src.Performances.Sum(p => p.Boknings.Count)))
                 .ReverseMap();
 
             // Mappa Performance till PerformanceDto och omvänt
@@ -30,6 +31,8 @@ namespace Booking.App.Mappings
                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
                 .ForMember(dest => dest.ConcertId, opt => opt.MapFrom(src => src.ConcertId))
                 .ForMember(dest => dest.Concert, opt => opt.MapFrom(src => src.Concert))
+                .ForMember(dest => dest.ConcertTitle, opt => opt.MapFrom(src => src.Concert.Title))
+                .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(src => src.Boknings.Count))
                 .ReverseMap();
                 
             // Mappa Bokning till BookingDto och omvänt

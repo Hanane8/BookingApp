@@ -74,6 +74,12 @@
                                                MaxLines="2"
                                                LineBreakMode="TailTruncation"
                                                BackgroundColor="Transparent"/>
+                                                
+                                                <Label Text="{Binding BookingCount, StringFormat='Bookings: {0}'}"
+                                               FontSize="12"
+                                               TextColor="#e74c3c"
+                                               FontAttributes="Bold"
+                                               BackgroundColor="Transparent"/>
                                             </VerticalStackLayout>
                                         </Grid>
                                     </Frame>
@@ -120,6 +126,12 @@
                                             <Label Text="{Binding DateTime}" 
                                        FontSize="14" 
                                        TextColor="#34495e"
+                                       BackgroundColor="Transparent"/>
+                                            
+                                            <Label Text="{Binding BookingCount, StringFormat='Bookings: {0}'}"
+                                       FontSize="12"
+                                       TextColor="#e74c3c"
+                                       FontAttributes="Bold"
                                        BackgroundColor="Transparent"/>
 
                                             <Button Text="🎟 Book Performance" 

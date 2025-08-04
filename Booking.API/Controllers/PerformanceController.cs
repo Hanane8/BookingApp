@@ -35,6 +35,13 @@ namespace Booking.API.Controllers
             return Ok(performance);
         }
 
+        [HttpGet("concert/{concertId}")]
+        public async Task<IActionResult> GetPerformancesByConcertId(int concertId)
+        {
+            var performances = await _bookingService.GetPerformancesByConcertIdAsync(concertId);
+            return Ok(performances);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePerformance([FromBody] PerformanceDto performanceDto)
         {

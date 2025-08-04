@@ -107,14 +107,19 @@ namespace Booking.App.Services
 
         public async Task<IEnumerable<ConcertDto>> GetAllConcertsAsync()
         {
-            var concerts = await _context.Concerts.Include(c => c.Performances).ToListAsync();
+            var concerts = await _context.Concerts
+                .Include(c => c.Performances)
+                .ThenInclude(p => p.Boknings)
+                .ToListAsync();
             return _mapper.Map<IEnumerable<ConcertDto>>(concerts);
         }
 
         public async Task<ConcertDto> GetConcertByIdAsync(int concertId)
         {
-            var concert = await _context.Concerts.Include(c => c.Performances)
-                                                 .FirstOrDefaultAsync(c => c.Id == concertId);
+            var concert = await _context.Concerts
+                .Include(c => c.Performances)
+                .ThenInclude(p => p.Boknings)
+                .FirstOrDefaultAsync(c => c.Id == concertId);
             return _mapper.Map<ConcertDto>(concert);
         }
 
@@ -145,13 +150,19 @@ namespace Booking.App.Services
 
         public async Task<IEnumerable<PerformanceDto>> GetAllPerformancesAsync()
         {
-            var performances = await _unitOfWork.PerformanceRepository.GetAllAsync();
+            var performances = await _context.Performances
+                .Include(p => p.Concert)
+                .Include(p => p.Boknings)
+                .ToListAsync();
             return _mapper.Map<IEnumerable<PerformanceDto>>(performances);
         }
 
         public async Task<PerformanceDto> GetPerformanceByIdAsync(int performanceId)
         {
-            var performance = await _unitOfWork.PerformanceRepository.GetByIdAsync(performanceId);
+            var performance = await _context.Performances
+                .Include(p => p.Concert)
+                .Include(p => p.Boknings)
+                .FirstOrDefaultAsync(p => p.Id == performanceId);
             return _mapper.Map<PerformanceDto>(performance);
         }
 
@@ -182,6 +193,8 @@ namespace Booking.App.Services
         public async Task<IEnumerable<PerformanceDto>> GetPerformancesByConcertIdAsync(int concertId)
         {
             var performances = await _context.Performances
+                .Include(p => p.Concert)
+                .Include(p => p.Boknings)
                 .Where(p => p.ConcertId == concertId) 
                 .ToListAsync();
 

@@ -12,7 +12,8 @@ namespace Booking.App.DTOs
         public DateTime DateTime { get; set; }
         public string Location { get; set; }
         public int ConcertId { get; set; }
+        public string ConcertTitle { get; set; }
         public ConcertDto Concert { get; set; }
-
+        public int BookingCount { get; set; }
     }
 }
