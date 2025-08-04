@@ -15,7 +15,6 @@ namespace Booking.MAUI.Service
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(Constants.BaseUrl);
         }
 
         public async Task<bool> IsUserAuthenticated()
@@ -28,7 +27,8 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/User/login", loginDto);
+                var fullUrl = $"{Constants.BaseUrl}/api/User/login";
+                var response = await _httpClient.PostAsJsonAsync(fullUrl, loginDto);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -67,7 +67,8 @@ namespace Booking.MAUI.Service
             }
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.GetAsync("api/User/myBookings");
+            var fullUrl = $"{Constants.BaseUrl}/api/User/myBookings";
+            var response = await _httpClient.GetAsync(fullUrl);
 
             if (response.IsSuccessStatusCode)
             {
@@ -104,7 +105,8 @@ namespace Booking.MAUI.Service
         public async Task<LogoutResponse> LogoutUserAsync()
         {
             var httpClient = await GetAuthenticatedHttpClientAsync();
-            var response = await httpClient.PostAsync("api/User/logout", null);
+            var fullUrl = $"{Constants.BaseUrl}/api/User/logout";
+            var response = await httpClient.PostAsync(fullUrl, null);
 
             if (response.IsSuccessStatusCode)
             {
@@ -127,7 +129,8 @@ namespace Booking.MAUI.Service
             }
 
             var httpClient = await GetAuthenticatedHttpClientAsync();
-            var response = await httpClient.GetAsync("api/User/myBookings");
+            var fullUrl = $"{Constants.BaseUrl}/api/User/myBookings";
+            var response = await httpClient.GetAsync(fullUrl);
 
             if (response.IsSuccessStatusCode)
             {

@@ -13,14 +13,14 @@ namespace Booking.MAUI.Service
         public PerformanceService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(Constants.BaseUrl);
         }
 
         public async Task<List<PerformanceDto>> GetAllPerformancesAsync()
         {
             try
             {
-                var response = await _httpClient.GetAsync("api/Performance");
+                var fullUrl = $"{Constants.BaseUrl}/api/Performance";
+                var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
                 {
@@ -43,7 +43,8 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/Performance/concert/{concertId}");
+                var fullUrl = $"{Constants.BaseUrl}/api/Performance/concert/{concertId}";
+                var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
                 {
@@ -66,7 +67,8 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/Performance/{id}");
+                var fullUrl = $"{Constants.BaseUrl}/api/Performance/{id}";
+                var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
                 {

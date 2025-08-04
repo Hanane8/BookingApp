@@ -13,14 +13,14 @@ namespace Booking.MAUI.Service
         public ConcertService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(Constants.BaseUrl);
         }
 
         public async Task<List<ConcertDto>> GetAllConcertsAsync()
         {
             try
             {
-                var response = await _httpClient.GetAsync("api/Concert");
+                var fullUrl = $"{Constants.BaseUrl}/api/Concert";
+                var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
                 {
@@ -43,7 +43,8 @@ namespace Booking.MAUI.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/Concert/{id}");
+                var fullUrl = $"{Constants.BaseUrl}/api/Concert/{id}";
+                var response = await _httpClient.GetAsync(fullUrl);
                 
                 if (response.IsSuccessStatusCode)
                 {
