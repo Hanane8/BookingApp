@@ -1,5 +1,4 @@
-﻿using Booking.App.Services;
-using Booking.App.DTOs;
+﻿using Booking.App.DTOs;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
@@ -12,7 +11,7 @@ namespace Booking.MAUI.ViewModels
 {
     public class MyBookingsViewModel : BindableObject
     {
-        private readonly IBookingService _bookingService;
+        private readonly BookingHttpService _bookingService;
         private readonly AuthService _authService;
 
         public ObservableCollection<BookingDto> Bookings { get; set; } = new ObservableCollection<BookingDto>();
@@ -21,7 +20,7 @@ namespace Booking.MAUI.ViewModels
         public ICommand CancelBookingCommand { get; }
         public ICommand UpdateBookingCommand { get; }
 
-        public MyBookingsViewModel(IBookingService bookingService, AuthService authService)
+        public MyBookingsViewModel(BookingHttpService bookingService, AuthService authService)
         {
             _bookingService = bookingService;
             _authService = authService;
@@ -72,10 +71,16 @@ namespace Booking.MAUI.ViewModels
 
             if (confirmation)
             {
-                await _bookingService.CancelBookingAsync(SelectedBooking.Id);
-                await Application.Current.MainPage.DisplayAlert("Success", "Booking canceled successfully!", "OK");
-
-                await LoadBookingsAsync();
+                try
+                {
+                    await _bookingService.CancelBookingAsync(SelectedBooking.Id);
+                    await Application.Current.MainPage.DisplayAlert("Success", "Booking canceled successfully!", "OK");
+                    await LoadBookingsAsync();
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", $"Failed to cancel booking: {ex.Message}", "OK");
+                }
             }
         }
 

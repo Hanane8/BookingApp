@@ -1,5 +1,4 @@
-﻿using Booking.App.Services;
-using Booking.App.DTOs;
+﻿using Booking.App.DTOs;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +13,9 @@ namespace Booking.MAUI.ViewModels
 {
     public class HomeViewModel : BindableObject
     {
-        private readonly IBookingService _bookingService;
+        private readonly ConcertService _concertService;
+        private readonly PerformanceService _performanceService;
+        private readonly BookingHttpService _bookingService;
         private readonly AuthService _authService;
         public ObservableCollection<ConcertDto> Concerts { get; set; } = new ObservableCollection<ConcertDto>();
         public ObservableCollection<PerformanceDto> Performances { get; set; } = new ObservableCollection<PerformanceDto>();
@@ -45,8 +46,10 @@ namespace Booking.MAUI.ViewModels
 
         public ICommand BookPerformanceCommand { get; }
 
-        public HomeViewModel(IBookingService bookingService, AuthService authService)
+        public HomeViewModel(ConcertService concertService, PerformanceService performanceService, BookingHttpService bookingService, AuthService authService)
         {
+            _concertService = concertService;
+            _performanceService = performanceService;
             _bookingService = bookingService;
             _authService = authService;
             Concerts = new ObservableCollection<ConcertDto>();
@@ -59,7 +62,7 @@ namespace Booking.MAUI.ViewModels
         {
             try
             {
-                var concerts = await _bookingService.GetAllConcertsAsync();
+                var concerts = await _concertService.GetAllConcertsAsync();
                 Concerts.Clear();
                 foreach (var concert in concerts)
                 {
@@ -79,7 +82,7 @@ namespace Booking.MAUI.ViewModels
         {
             if (SelectedConcert == null) return;
 
-            var performances = await _bookingService.GetPerformancesByConcertIdAsync(SelectedConcert.Id);
+            var performances = await _performanceService.GetPerformancesByConcertIdAsync(SelectedConcert.Id);
             Performances.Clear();
             foreach (var performance in performances)
             {
@@ -129,8 +132,8 @@ namespace Booking.MAUI.ViewModels
 
             try
             {
-                // Call the BookingService method to book the performance
-                var bookedPerformance = await _bookingService.BookPerformanceAsync(bookPerformanceDto, currentUser);
+                // Call the BookingHttpService method to book the performance
+                var bookedPerformance = await _bookingService.BookPerformanceAsync(bookPerformanceDto);
 
                 // Show success message
                 await App.Current.MainPage.DisplayAlert("Success", "Performance booked successfully!", "OK");

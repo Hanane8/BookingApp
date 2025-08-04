@@ -75,6 +75,26 @@ namespace Booking.API.Controllers
             }
             return Ok(booking);
         }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingDto updatedBooking)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _bookingService.UpdateBookingAsync(id, updatedBooking);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         
     }
 }

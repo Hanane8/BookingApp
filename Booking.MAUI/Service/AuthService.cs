@@ -14,12 +14,8 @@ namespace Booking.MAUI.Service
 
         public AuthService(HttpClient httpClient)
         {
-            var baseUrl = DeviceInfo.Platform == DevicePlatform.Android
-                ? "http://10.0.2.2:5133" // Android-emulatorns "localhost"
-                : "http://localhost:5133"; // Utvecklingsmaskinens "localhost"
-
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(baseUrl);
+            _httpClient.BaseAddress = new Uri(Constants.BaseUrl);
         }
 
         public async Task<bool> IsUserAuthenticated()
