@@ -27,9 +27,12 @@ namespace Booking.MAUI.ViewModels
             {
                 _selectedConcert = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsConcertSelected));
                 LoadPerformances();
             }
         }
+
+        public bool IsConcertSelected => SelectedConcert != null;
 
         private PerformanceDto _selectedPerformance;
         public PerformanceDto SelectedPerformance

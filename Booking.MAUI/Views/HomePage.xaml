@@ -97,7 +97,7 @@
                            Padding="15" 
                            HasShadow="False"
                            Margin="10"
-                           IsVisible="{Binding SelectedConcert}">
+                           IsVisible="{Binding IsConcertSelected}">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="🎭 Available Performances" 
                            FontSize="22" 
