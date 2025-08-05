@@ -21,13 +21,15 @@ namespace Booking.App.Services
         private readonly IMapper _mapper;
         private readonly BokningContext _context;
         private readonly IValidator<BookingDto> _bookingValidator;
+        private readonly IValidator<BookPerformanceDto> _bookPerformanceValidator;
         private readonly HttpClient _httpClient;
-        public BookingService(IUnitOfWork unitOfWork, IMapper mapper, BokningContext context, IValidator<BookingDto> bookingValidator, HttpClient httpClient)
+        public BookingService(IUnitOfWork unitOfWork, IMapper mapper, BokningContext context, IValidator<BookingDto> bookingValidator, IValidator<BookPerformanceDto> bookPerformanceValidator, HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _context = context;
             _bookingValidator = bookingValidator;
+            _bookPerformanceValidator = bookPerformanceValidator;
             _httpClient = httpClient;
         }
 
@@ -37,29 +39,38 @@ namespace Booking.App.Services
             {
                 throw new ArgumentNullException(nameof(bookPerformanceDto));
             }
-            var bookingDto = _mapper.Map<BookingDto>(bookPerformanceDto);
-            ValidationResult validationResult = _bookingValidator.Validate(bookingDto);
+            
+            Console.WriteLine($"BookingService: Validating BookPerformanceDto with PerformanceId: {bookPerformanceDto.PerformanceId}");
+            ValidationResult validationResult = _bookPerformanceValidator.Validate(bookPerformanceDto);
             if (!validationResult.IsValid)
             {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                Console.WriteLine($"BookingService: Validation failed: {errors}");
                 throw new ValidationException(validationResult.Errors);
             }
 
+            Console.WriteLine($"BookingService: Looking up performance with ID: {bookPerformanceDto.PerformanceId}");
             var performance = await _unitOfWork.PerformanceRepository.GetByIdAsync(bookPerformanceDto.PerformanceId);
             if (performance == null)
             {
+                Console.WriteLine($"BookingService: Performance not found with ID: {bookPerformanceDto.PerformanceId}");
                 throw new KeyNotFoundException("Performance not found.");
             }
 
             var userIdString = currentUser?.FindFirstValue(ClaimTypes.NameIdentifier); 
+            Console.WriteLine($"BookingService: User ID from claims: {userIdString}");
 
             if (Guid.TryParse(userIdString, out Guid userId)) 
             {
+                Console.WriteLine($"BookingService: Looking up user with ID: {userId}");
                 var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
+                    Console.WriteLine($"BookingService: User not found with ID: {userId}");
                     throw new UnauthorizedAccessException("User not found.");
                 }
 
+                Console.WriteLine($"BookingService: Creating booking for user: {user.UserName}");
                 var booking = new Bokning
                 {
                     PerformanceId = bookPerformanceDto.PerformanceId,
@@ -71,11 +82,13 @@ namespace Booking.App.Services
 
                 await _unitOfWork.BookingRepository.AddAsync(booking);
                 await _unitOfWork.SaveAsync();
+                Console.WriteLine($"BookingService: Successfully created booking with ID: {booking.Id}");
 
                 return bookPerformanceDto;
             }
             else
             {
+                Console.WriteLine($"BookingService: Invalid UserId format: {userIdString}");
                 throw new UnauthorizedAccessException("Invalid UserId format.");
             }
         }        

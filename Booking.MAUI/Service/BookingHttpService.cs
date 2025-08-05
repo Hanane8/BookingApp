@@ -47,22 +47,29 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = "/api/Booking";
+                var fullUrl = "/api/Booking/book";
+                Console.WriteLine($"BookPerformanceAsync: Making request to: {authenticatedClient.BaseAddress}{fullUrl}");
+                Console.WriteLine($"BookPerformanceAsync: Request data: PerformanceId={bookPerformanceDto.PerformanceId}");
+                
                 var response = await authenticatedClient.PostAsJsonAsync(fullUrl, bookPerformanceDto);
+                Console.WriteLine($"BookPerformanceAsync: Response status: {response.StatusCode}");
                 
                 if (response.IsSuccessStatusCode)
                 {
                     var booking = await response.Content.ReadFromJsonAsync<BookingDto>();
-                    return booking ?? throw new Exception("Failed to create booking");
+                    Console.WriteLine($"BookPerformanceAsync: Successfully created booking with ID: {booking?.Id}");
+                    return booking ?? throw new Exception("Failed to create booking - response was null");
                 }
                 else
                 {
                     var errorDetails = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Failed to book performance: {errorDetails}");
+                    Console.WriteLine($"BookPerformanceAsync: Error response: {errorDetails}");
+                    throw new Exception($"Failed to book performance (Status: {response.StatusCode}): {errorDetails}");
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"BookPerformanceAsync: Exception occurred: {ex.Message}");
                 throw new Exception($"An error occurred while booking performance: {ex.Message}");
             }
         }

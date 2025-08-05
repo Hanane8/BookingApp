@@ -20,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddTransient<IValidator<BookingDto>, BookingValidator>();
+builder.Services.AddTransient<IValidator<BookPerformanceDto>, BookPerformanceValidator>();
 builder.Services.AddTransient<IValidator<LoginDto>,  LoginDtoValidator>();
 builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
 
@@ -38,7 +39,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         In = ParameterLocation.Header,
-        Description = "En API för att hantera Bookings"
+        Description = "En API fÃ¶r att hantera Bookings"
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {

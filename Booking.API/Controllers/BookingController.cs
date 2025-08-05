@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FluentValidation;
 
 namespace Booking.API.Controllers
 {
@@ -30,12 +31,32 @@ namespace Booking.API.Controllers
 
             try
             {
-                var result = await _bookingService.BookPerformanceAsync(bookPerformanceDto, User); // Pass currentUser (HttpContext.User)
+                Console.WriteLine($"BookPerformance: Received request for PerformanceId: {bookPerformanceDto?.PerformanceId}");
+                Console.WriteLine($"BookPerformance: User claims: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+                
+                var result = await _bookingService.BookPerformanceAsync(bookPerformanceDto, User);
+                Console.WriteLine($"BookPerformance: Successfully created booking");
                 return Ok(result);
+            }
+            catch (ValidationException ex)
+            {
+                Console.WriteLine($"BookPerformance: Validation error: {ex.Message}");
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine($"BookPerformance: Performance not found: {ex.Message}");
+                return NotFound(new { Error = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine($"BookPerformance: Unauthorized: {ex.Message}");
+                return Unauthorized(new { Error = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                Console.WriteLine($"BookPerformance: Unexpected error: {ex.Message}");
+                return StatusCode(500, new { Error = ex.Message });
             }
         }
 

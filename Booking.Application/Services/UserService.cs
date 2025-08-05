@@ -90,7 +90,7 @@ namespace Booking.App.Services
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddHours(24),
                 signingCredentials: creds
             );
 

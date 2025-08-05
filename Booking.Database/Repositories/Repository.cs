@@ -48,9 +48,14 @@ namespace Booking.Database.Repositories
         {
             return await Task.FromResult(_dbSet.FirstOrDefault(predicate));
         }
-        public async Task<T> GetByIdAsync<TKey>(TKey id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);  // This will work for both int and Guid based on the entity
+            return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<T> GetByIdAsync(Guid id)
+        {
+            return await _dbSet.FindAsync(id);
         }
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
         public async Task Update(T entity) => _dbSet.Update(entity);

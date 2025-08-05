@@ -17,7 +17,8 @@ namespace Booking.Database.Repositories
 
         Task<T> FindAsync(Func<T, bool> predicate);
 
-        Task<T> GetByIdAsync<TKey>(TKey id);
+        Task<T> GetByIdAsync(int id);
+        Task<T> GetByIdAsync(Guid id);
         Task AddAsync(T entity);
         Task Update(T entity);
         Task Delete(T entity);
