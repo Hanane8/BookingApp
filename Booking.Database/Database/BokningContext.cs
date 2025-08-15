@@ -31,7 +31,6 @@ namespace Booking.Database.Database
                 .WithMany(p => p.Boknings)
                 .HasForeignKey(b => b.PerformanceId);
 
-            // Lägg till relation mellan Bokning och User
             modelBuilder.Entity<Bokning>()
                 .HasOne(b => b.User)
                 .WithMany()

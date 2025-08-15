@@ -26,7 +26,6 @@ builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
 
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
 
 

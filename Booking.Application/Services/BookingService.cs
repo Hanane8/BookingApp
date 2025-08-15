@@ -223,18 +223,42 @@ namespace Booking.App.Services
             return _mapper.Map<IEnumerable<BookingDto>>(bookings);
         }
 
-        public async Task CancelBookingAsync(int bookingId)
+        public async Task CancelBookingAsync(int bookingId, ClaimsPrincipal currentUser = null)
         {
+            Console.WriteLine($"BookingService: CancelBookingAsync called for booking ID: {bookingId}");
+            
             var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
-            if (booking != null)
+            if (booking == null)
             {
-                await _unitOfWork.BookingRepository.Delete(booking);
-                await _unitOfWork.SaveAsync();
+                Console.WriteLine($"BookingService: Booking not found with ID: {bookingId}");
+                throw new KeyNotFoundException("Booking not found.");
             }
-            else
+
+            
+            if (currentUser != null)
             {
-                throw new Exception("Booking not found.");
+                var userIdString = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+                Console.WriteLine($"BookingService: User ID from claims: {userIdString}");
+
+                if (Guid.TryParse(userIdString, out Guid userId))
+                {
+                    if (booking.UserId != userId)
+                    {
+                        Console.WriteLine($"BookingService: User {userId} is not authorized to cancel booking {bookingId} (owned by user {booking.UserId})");
+                        throw new UnauthorizedAccessException("You are not authorized to cancel this booking.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"BookingService: Invalid UserId format: {userIdString}");
+                    throw new UnauthorizedAccessException("Invalid UserId format.");
+                }
             }
+
+            Console.WriteLine($"BookingService: Canceling booking ID: {bookingId} for user: {booking.CustomerName}");
+            await _unitOfWork.BookingRepository.Delete(booking);
+            await _unitOfWork.SaveAsync();
+            Console.WriteLine($"BookingService: Successfully canceled booking ID: {bookingId}");
         }
 
     }

@@ -29,19 +29,6 @@ namespace Booking.MAUI
                 BaseAddress = new Uri("https://localhost:7006/")
             };
 
-//            // Konfigurera SSL för development
-//            var handler = new HttpClientHandler
-//            {
-//                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-//                {
-//#if DEBUG
-//                    return true; // Acceptera alla certifikat i debug
-//#else
-//                    return errors == System.Net.Security.SslPolicyErrors.None;
-//#endif
-//                }
-//            };
-
             // Registrera HttpClient som Singleton (en enda instans)
             builder.Services.AddSingleton<HttpClient>(httpClient);
 

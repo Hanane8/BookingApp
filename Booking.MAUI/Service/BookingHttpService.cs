@@ -79,21 +79,27 @@ namespace Booking.MAUI.Service
             try
             {
                 var authenticatedClient = await _authService.GetAuthenticatedHttpClientAsync();
-                var fullUrl = $"/api/Booking/{bookingId}";
+                var fullUrl = $"/api/Booking/cancel/{bookingId}";
+                Console.WriteLine($"CancelBookingAsync: Making request to: {authenticatedClient.BaseAddress}{fullUrl}");
+                
                 var response = await authenticatedClient.DeleteAsync(fullUrl);
+                Console.WriteLine($"CancelBookingAsync: Response status: {response.StatusCode}");
                 
                 if (response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($"CancelBookingAsync: Successfully canceled booking ID: {bookingId}");
                     return true;
                 }
                 else
                 {
                     var errorDetails = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Failed to cancel booking: {errorDetails}");
+                    Console.WriteLine($"CancelBookingAsync: Error response: {errorDetails}");
+                    throw new Exception($"Failed to cancel booking (Status: {response.StatusCode}): {errorDetails}");
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"CancelBookingAsync: Exception occurred: {ex.Message}");
                 throw new Exception($"An error occurred while canceling booking: {ex.Message}");
             }
         }

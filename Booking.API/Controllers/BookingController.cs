@@ -61,6 +61,7 @@ namespace Booking.API.Controllers
         }
 
         [HttpDelete("cancel/{id}")]
+        [Authorize]
         public async Task<IActionResult> CancelBooking(int id)
         {
             if (!ModelState.IsValid)
@@ -70,12 +71,27 @@ namespace Booking.API.Controllers
 
             try
             {
-                await _bookingService.CancelBookingAsync(id);
-                return Ok();
+                Console.WriteLine($"CancelBooking: Received request to cancel booking ID: {id}");
+                Console.WriteLine($"CancelBooking: User claims: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+                
+                await _bookingService.CancelBookingAsync(id, User);
+                Console.WriteLine($"CancelBooking: Successfully canceled booking ID: {id}");
+                return Ok(new { Message = "Booking canceled successfully" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine($"CancelBooking: Booking not found: {ex.Message}");
+                return NotFound(new { Error = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine($"CancelBooking: Unauthorized: {ex.Message}");
+                return Unauthorized(new { Error = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                Console.WriteLine($"CancelBooking: Unexpected error: {ex.Message}");
+                return StatusCode(500, new { Error = ex.Message });
             }
         }
 

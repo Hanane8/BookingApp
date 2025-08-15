@@ -6,7 +6,7 @@ namespace Booking.App.Services
     public interface IBookingService
     {
         Task<BookPerformanceDto> BookPerformanceAsync(BookPerformanceDto bookPerformanceDto, ClaimsPrincipal currentUser);
-        Task CancelBookingAsync(int bookingId);
+        Task CancelBookingAsync(int bookingId, ClaimsPrincipal currentUser = null);
         Task<IEnumerable<BookingDto>> GetAllBookingsAsync();
         Task<BookingDto> GetBookingByIdAsync(int bookingId);
         Task<IEnumerable<ConcertDto>> GetAllConcertsAsync();
